@@ -1,6 +1,9 @@
 package distsys.promigr.process;
 
-public class MigratableProcess
-{
+import java.io.Serializable;
 
+public interface MigratableProcess extends Runnable, Serializable
+{
+    
+    public void suspend();
 }
