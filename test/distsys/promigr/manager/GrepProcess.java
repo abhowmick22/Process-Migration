@@ -1,5 +1,6 @@
 package distsys.promigr.manager;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.io.EOFException;
 import java.io.DataInputStream;
@@ -15,29 +16,34 @@ import distsys.promigr.process.MigratableProcess;
 public class GrepProcess implements MigratableProcess
 {
 
+    private volatile boolean suspending = false;
+    private int i = 0;
+    public boolean suspended = false;
+    
     @Override
     public void run()
     {
-       System.out.println("run");
-       try {
-           Thread.sleep(100000);
-       }
-        catch (InterruptedException e) {
-            suspend();        
+        while (!suspending) {
+            System.out.println(i++);            
+            // Make grep take longer so that we don't require extremely large files for interesting results
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                suspend();
+            }
         }
-        
+        suspending=false;
     }
 
     @Override
     public void suspend()
     {
         boolean suspending = true;
+        System.out.println("suspended");
+        //suspended = true;
         while(suspending);
+        System.out.println("out");
         
-    }
-
-    public static void main(String args[]) {
-        new Thread(new GrepProcess()).start();
     }
     
     
