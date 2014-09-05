@@ -1,10 +1,17 @@
 package distsys.promigr.io;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
+
+import sun.misc.IoTrace;
 
 public class TransactionalFileInputStream extends InputStream implements Serializable
 {
@@ -15,7 +22,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
     
     private String filename;
     private int offset;
-    
+    private File file;
     /**
      * 
      * @param filename
@@ -24,22 +31,28 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
         this.filename = filename;
         this.offset = 0;
         
-        
-    }
-    
-    public InputStream fileOpen(String filename, int offset) throws FileNotFoundException{
-        return null;
-        
-        
+        this.file = new File(filename);
         
     }
     
     @Override
-    public int read()
+    public synchronized int read()
         throws IOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+        InputStream is = null;
+        try {
+            is = new FileInputStream(this.file);
+            is.skip(offset);
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        int c = is.read();
+        this.offset++;  
+        is.close();
+        return c;
     }
+    
 
 }
