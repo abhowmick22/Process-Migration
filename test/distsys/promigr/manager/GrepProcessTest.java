@@ -9,12 +9,26 @@ import java.io.ObjectOutputStream;
 public class GrepProcessTest
 {
     public static void main(String args[]) {
-        GrepProcess gp = new GrepProcess();
+        GrepProcess gp = null;
+        try {
+            gp = new GrepProcess();
+        }
+        catch (Exception e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
         Thread t = new Thread(gp);
         t.start();
+        try {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         t.interrupt();
         //gp.suspend();
-        
+        //System.exit(0);
         try
         {
            FileOutputStream fileOut =
@@ -23,12 +37,22 @@ public class GrepProcessTest
            out.writeObject(gp);
            out.close();
            fileOut.close();
-           System.out.printf("Serialized data is saved in /tmp/employee.ser");
         }catch(IOException i)
         {
             i.printStackTrace();
-        }
+        } 
+        
         System.out.println("serialized");
+        gp.kill = true;
+        try {
+            t.join();
+        }
+        catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        System.out.println("JOINED");
+        //System.exit(0);
         
         GrepProcess gp2;
         try
@@ -51,9 +75,9 @@ public class GrepProcessTest
         System.out.println("deserialized");
         Thread t2 = new Thread(gp2);
         t2.start();
-        t2.interrupt();
+        //t2.interrupt();
         
-        assert(gp.suspended);
+        //assert(gp.suspended);
         try {
             t.join();
             t2.join();
