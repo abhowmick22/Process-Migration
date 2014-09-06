@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.Thread;
 import java.lang.InterruptedException;
+import java.util.Map;
 
 import distsys.promigr.io.TransactionalFileInputStream;
 import distsys.promigr.process.MigratableProcess;
@@ -29,13 +30,15 @@ public class GrepProcess implements MigratableProcess
         inFile = new TransactionalFileInputStream("/home/abhishek/a.txt");
 
     }
-    
+
     
     @Override
     public void run()
     {
         suspending = false;
         DataInputStream in = new DataInputStream(inFile); 
+        //Map<Thread, StackTraceElement[]> map = this.getAllStackTraces();
+    	//System.out.println(map);
         
         try {
             while (!suspending) {
@@ -60,6 +63,7 @@ public class GrepProcess implements MigratableProcess
         } catch (IOException e) {
             System.out.println ("GrepProcess: Error: " + e);
         }
+        
 
         suspending = false;
         
@@ -78,8 +82,9 @@ public class GrepProcess implements MigratableProcess
         };        
         
     }
-    
-    
+ 
+
+  
     
 }
 

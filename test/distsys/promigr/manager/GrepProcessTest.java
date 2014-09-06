@@ -1,5 +1,6 @@
 package distsys.promigr.manager;
 
+import java.lang.reflect.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,11 +56,18 @@ public class GrepProcessTest
         //System.exit(0);
         
         GrepProcess gp2;
+        Object rObject;
         try
         {
            FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
            ObjectInputStream in = new ObjectInputStream(fileIn);
            gp2 = (GrepProcess) in.readObject();
+
+           //rObject = in.readObject();
+           //Class c = GrepProcess.class;
+           //gp2 = c.cast(rObject);
+           
+           //System.out.println(gp2.getClass().getName());
            in.close();
            fileIn.close();
         }catch(IOException i)
