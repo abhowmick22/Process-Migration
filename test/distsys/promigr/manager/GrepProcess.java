@@ -26,7 +26,7 @@ public class GrepProcess implements MigratableProcess
     public GrepProcess() throws Exception
     {
         System.out.println("GREP CREATED!!!!!!-------------");
-        inFile = new TransactionalFileInputStream("/Users/neil/Desktop/CMU/Academics/Fall 2014/15-640 Distributed Systems/Assignments/promigr/src/distsys/promigr/io/a.txt");
+        inFile = new TransactionalFileInputStream("/home/abhishek/a.txt");
 
     }
     

@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 
-import sun.misc.IoTrace;
+//import sun.misc.IoTrace;
 
 public class TransactionalFileInputStream extends InputStream implements Serializable
 {
