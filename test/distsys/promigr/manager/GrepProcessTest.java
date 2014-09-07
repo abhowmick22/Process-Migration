@@ -27,8 +27,9 @@ public class GrepProcessTest
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        t.interrupt();
-        //gp.suspend();
+        if(t.isAlive()) {
+            gp.suspend();
+        }
         //System.exit(0);
         try
         {
@@ -44,7 +45,6 @@ public class GrepProcessTest
         } 
         
         System.out.println("serialized");
-        gp.kill = true;
         try {
             t.join();
         }

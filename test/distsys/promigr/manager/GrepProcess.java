@@ -21,13 +21,12 @@ public class GrepProcess implements MigratableProcess
 
     private volatile boolean suspending = false;
     private int i = 0;
-    public boolean suspended = false;
-    public volatile boolean kill = false;
+    public volatile boolean suspended = false;
     private TransactionalFileInputStream inFile;
     public GrepProcess() throws Exception
     {
         System.out.println("GREP CREATED!!!!!!-------------");
-        inFile = new TransactionalFileInputStream("/home/abhishek/a.txt");
+        inFile = new TransactionalFileInputStream("a.txt");
 
     }
 
@@ -53,9 +52,7 @@ public class GrepProcess implements MigratableProcess
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    suspend();
-                    if(kill)
-                        return;
+                    
                 }
             }
         } catch (EOFException e) {
@@ -73,13 +70,8 @@ public class GrepProcess implements MigratableProcess
     @Override
     public void suspend()
     {
-        boolean suspending = true;
-        System.out.println("suspended");
-        //suspended = true;
-        while(suspending) {
-            if(kill)
-                return;            
-        };        
+        suspending = true;
+        while(suspending);        
         
     }
  
