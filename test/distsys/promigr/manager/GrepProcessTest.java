@@ -2,6 +2,7 @@ package distsys.promigr.manager;
 
 import java.lang.reflect.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.FileInputStream;
@@ -27,6 +28,7 @@ public class GrepProcessTest
             e2.printStackTrace();
         }
         
+        //comand 1
         Socket clientSocket = new Socket("128.237.219.104", 50000);
         String procId = gp.getClass().getCanonicalName();
         System.out.println("Please refer to this process as " + procId);
@@ -35,10 +37,26 @@ public class GrepProcessTest
         messageWrap.setMigratableProcess(gp);
         messageWrap.setProcId(gp.getClass().getName());
         ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-        outStream.writeObject(gp);
+        outStream.writeObject(messageWrap);
         outStream.flush();
         outStream.close();
         clientSocket.close();
+        
+        //command 0
+        clientSocket = new Socket("128.237.219.104", 50000);
+        messageWrap = new MessageWrap();
+        messageWrap.setCommand(0);
+        messageWrap.setDest("128.237.197.175");
+        messageWrap.setProcId(gp.getClass().getName());
+        outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+        outStream.writeObject(messageWrap);
+        outStream.flush();
+        outStream.close();
+        clientSocket.close();
+        
+        ServerSocket serverSocket = new ServerSocket(50000);
+        serverSocket.accept();
+        
         //while(true);
         
         /*
