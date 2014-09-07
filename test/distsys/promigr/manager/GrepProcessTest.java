@@ -26,7 +26,7 @@ public class GrepProcessTest
             e2.printStackTrace();
         }
         
-        Socket clientSocket = new Socket(InetAddress.getByName(null), 50000);
+        Socket clientSocket = new Socket("128.237.219.104", 50000);
         String procId = gp.getClass().getCanonicalName();
         System.out.println("Please refer to this process as " + procId);
         PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
@@ -36,6 +36,7 @@ public class GrepProcessTest
         outStream.writeObject(gp);
         outStream.close();
         clientSocket.close();
+        //while(true);
         
         /*
         Thread t = new Thread(gp);

@@ -41,8 +41,14 @@ public class LocalManagerThread implements Runnable
 			in = new BufferedReader(new InputStreamReader(inputStream));
 			msg = Integer.parseInt(in.readLine());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			try {
+			    inputStream.close();
+			    clientSocket.close();
+            }
+            catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 		}
         
         switch (msg){        
