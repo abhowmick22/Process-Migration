@@ -99,7 +99,7 @@ public class LocalManagerThread implements Runnable
             	break;
             	
             case 2 :
-            	String procName ;
+            	String procName;
             	//while(procName != null)
             	
             	

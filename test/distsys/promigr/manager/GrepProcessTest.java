@@ -1,17 +1,22 @@
 package distsys.promigr.manager;
 
 import java.lang.reflect.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 
 import distsys.promigr.process.MigratableProcess;
 
 public class GrepProcessTest
 {
-    public static void main(String args[]) {
+    public static void main(String args[]) throws UnknownHostException, IOException {
+        
         GrepProcess gp = null;
         try {
             gp = new GrepProcess();
@@ -20,6 +25,19 @@ public class GrepProcessTest
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
+        
+        Socket clientSocket = new Socket(InetAddress.getByName(null), 50000);
+        String procId = gp.getClass().getCanonicalName();
+        System.out.println("Please refer to this process as " + procId);
+        PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
+        printWriter.write("1");
+        printWriter.write(procId);
+        ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+        outStream.writeObject(gp);
+        outStream.close();
+        clientSocket.close();
+        
+        /*
         Thread t = new Thread(gp);
         t.start();
         try {
@@ -96,5 +114,6 @@ public class GrepProcessTest
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
     }
 }
