@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,8 +19,11 @@ import distsys.promigr.process.MigratableProcess;
 
 public class GrepProcessTest
 {
+    public static ConcurrentMap<String, ThreadObject> threadMap;
+    
     public static void main(String args[]) throws UnknownHostException, IOException {
         
+        threadMap = new ConcurrentHashMap<String, ThreadObject>();
         GrepProcess gp = null;
         try {
             gp = new GrepProcess();
@@ -54,8 +59,17 @@ public class GrepProcessTest
         outStream.close();
         clientSocket.close();
         
-        ServerSocket serverSocket = new ServerSocket(50000);
-        serverSocket.accept();
+        
+            ServerSocket serverSocket = new ServerSocket(50000);          
+            while(true) {
+                synchronized(LocalManager.class) {
+                     clientSocket = serverSocket.accept();
+                     LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap, 50000);
+                     Thread thread = new Thread(lmthread);
+                     thread.start();
+                }
+            }
+        
         
         //while(true);
         
