@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 
+import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
 
 public class GrepProcessTest
@@ -29,11 +30,13 @@ public class GrepProcessTest
         Socket clientSocket = new Socket("128.237.219.104", 50000);
         String procId = gp.getClass().getCanonicalName();
         System.out.println("Please refer to this process as " + procId);
-        PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
-        printWriter.write("1");
-        printWriter.write(procId);
+        MessageWrap messageWrap = new MessageWrap();
+        messageWrap.setCommand(1);
+        messageWrap.setMigratableProcess(gp);
+        messageWrap.setProcId(gp.getClass().getName());
         ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
         outStream.writeObject(gp);
+        outStream.flush();
         outStream.close();
         clientSocket.close();
         //while(true);
