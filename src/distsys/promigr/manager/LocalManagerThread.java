@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
 
 public class LocalManagerThread implements Runnable
@@ -30,16 +31,20 @@ public class LocalManagerThread implements Runnable
     @Override
     public void run()
     {
-    	BufferedReader in = null;
-    	int msg = -1;
+    	ObjectInputStream in = null;
+    	MessageWrap message = null;
     	int port = 50000;
     	InputStream inputStream = null;
     	String procId, dest;
+    	int msg = -1;
     	
 		try {
 			inputStream = clientSocket.getInputStream();
-			in = new BufferedReader(new InputStreamReader(inputStream));
-			msg = Integer.parseInt(in.readLine());
+			in = new ObjectInputStream(inputStream);
+			//System.out.println(in.readLine());
+			
+			message = (MessageWrap) in.readObject();
+			msg = message.getCommand();
 		} catch (IOException e1) {
 			try {
 			    inputStream.close();
@@ -49,13 +54,16 @@ public class LocalManagerThread implements Runnable
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
         
         switch (msg){        
             case 0 : 
             	try {
-    				procId = in.readLine().trim();
-    				dest = in.readLine().trim();
+    				procId = message.getProcId();
+    				dest = message.getDest();
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
@@ -67,6 +75,7 @@ public class LocalManagerThread implements Runnable
     		        outStream.close();
     		        clientSocket.close();
     				threadMap.remove(procId);
+    				System.out.println(threadMap);
     				
     			} catch (IOException e) {
     				// TODO Auto-generated catch block
@@ -74,31 +83,26 @@ public class LocalManagerThread implements Runnable
     			}
             	break;
             case 1 : 
-            	ObjectInputStream objectIn= null;
+            	
             	MigratableProcess recdProcess;
             	Class<?> myClass;
             	String className;
      
             	 try {
-    				procId = in.readLine().trim();
-    				objectIn = new ObjectInputStream(inputStream);
-    				recdProcess = (MigratableProcess) objectIn.readObject();
+    				procId = message.getProcId();
+            		
+    				
+    				recdProcess = (MigratableProcess) message.getProcess();
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
     				Thread processThread = new Thread(recdProcess);
     				threadObject.setThread(processThread);
     				threadMap.put(procId, threadObject);
+    				System.out.println(threadMap);
     				processThread.start();
     				processThread.join();
     				
-    			} catch (IOException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			} catch (ClassNotFoundException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-                catch (InterruptedException e) {
+    			} catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }   	
