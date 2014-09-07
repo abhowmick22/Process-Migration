@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import distsys.promigr.process.MigratableProcess;
+
 public class GrepProcessTest
 {
     public static void main(String args[]) {
@@ -61,9 +63,9 @@ public class GrepProcessTest
         {
            FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
            ObjectInputStream in = new ObjectInputStream(fileIn);
-           gp2 = (GrepProcess) in.readObject();
+           //gp2 = (GrepProcess) in.readObject();
 
-           //rObject = in.readObject();
+           rObject = in.readObject();
            //Class c = GrepProcess.class;
            //gp2 = c.cast(rObject);
            
@@ -81,7 +83,7 @@ public class GrepProcessTest
            return;
         }
         System.out.println("deserialized");
-        Thread t2 = new Thread(gp2);
+        Thread t2 = new Thread((MigratableProcess)rObject);
         t2.start();
         //t2.interrupt();
         
