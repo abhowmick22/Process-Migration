@@ -13,6 +13,7 @@ import java.lang.InterruptedException;
 import java.util.Map;
 
 import distsys.promigr.io.TransactionalFileInputStream;
+import distsys.promigr.io.TransactionalFileOutputStream;
 import distsys.promigr.process.MigratableProcess;
 
 
@@ -23,11 +24,13 @@ public class GrepProcess implements MigratableProcess
     private int i = 0;
     public volatile boolean suspended = false;
     private TransactionalFileInputStream inFile;
+    private TransactionalFileOutputStream outFile;
+    
     public GrepProcess() throws Exception
     {
         System.out.println("GREP CREATED!!!!!!-------------");
         inFile = new TransactionalFileInputStream("a.txt");
-
+        outFile = new TransactionalFileOutputStream("b.txt", false);
     }
 
     
