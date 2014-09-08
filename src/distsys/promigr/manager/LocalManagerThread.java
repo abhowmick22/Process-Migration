@@ -60,23 +60,30 @@ public class LocalManagerThread implements Runnable
 		}
         
         switch (msg){        
-            case 0 : 
+            case 0 : {
             	try {
     				procId = message.getProcId();
-    				dest = message.getDest();
+    				dest = message.getDest();z
+    				System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
-    				PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
-    				printWriter.write("1");
-    				printWriter.write(procId);
+    				//PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
+    				//printWriter.write("1");
+    				//printWriter.write(procId);
+    				MessageWrap echoMsg = new MessageWrap();
+    				echoMsg.setCommand(1);
+    				echoMsg.setProcId(procId);
+    				echoMsg.setMigratableProcess(process);
+    				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
     			    
     			    Thread.sleep(1000);
-    			    outStream.writeObject(process);
+    			    outStream.writeObject(echoMsg);
     		        outStream.close();
     		        clientSocket.close();
     				threadMap.remove(procId);
+    				System.out.println("removing keys" + threadMap.keySet());
     				System.out.println(threadMap);
     				
     			} catch (IOException e) {
@@ -87,7 +94,8 @@ public class LocalManagerThread implements Runnable
 					e.printStackTrace();
 				}
             	break;
-            case 1 : 
+            }
+            case 1 : {
             	
             	MigratableProcess recdProcess;
             	Class<?> myClass;
@@ -101,9 +109,10 @@ public class LocalManagerThread implements Runnable
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
     				Thread processThread = new Thread(recdProcess);
+    				
     				threadObject.setThread(processThread);
     				threadMap.put(procId, threadObject);
-    				System.out.println(threadMap);
+    				System.out.println("added keys " + threadMap.keySet());
     				processThread.start();
     				processThread.join();
     				
@@ -112,7 +121,7 @@ public class LocalManagerThread implements Runnable
                     e.printStackTrace();
                 }   	
             	break;
-            	
+            }
             case 2 :
             	String procName;
             	//while(procName != null)
