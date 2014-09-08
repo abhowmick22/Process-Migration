@@ -30,7 +30,7 @@ public class GrepProcess implements MigratableProcess
     {
         System.out.println("GREP CREATED!!!!!!-------------");
         inFile = new TransactionalFileInputStream("a.txt");
-        outFile = new TransactionalFileOutputStream("b.txt", false);
+        outFile = new TransactionalFileOutputStream("b.txt", true);
     }
 
     

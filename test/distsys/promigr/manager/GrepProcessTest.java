@@ -46,7 +46,13 @@ public class GrepProcessTest
         outStream.flush();
         outStream.close();
         clientSocket.close();
-        
+        try {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         //command 0
         clientSocket = new Socket("128.237.219.104", 50000);
         messageWrap = new MessageWrap();
