@@ -37,25 +37,24 @@ public class GrepProcess implements MigratableProcess
     @Override
     public void run()
     {
-        suspending = false;
-        DataInputStream in = new DataInputStream(inFile); 
-        //Map<Thread, StackTraceElement[]> map = this.getAllStackTraces();
-    	//System.out.println(map);
-        
+        PrintStream out = new PrintStream(outFile);
+        DataInputStream in = new DataInputStream(inFile);
+
         try {
             while (!suspending) {
                 String line = in.readLine();
 
                 if (line == null) break;
                 
-               
                 System.out.println(line);
+                out.println(line);
+                
                 
                 // Make grep take longer so that we don't require extremely large files for interesting results
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    
+                    // ignore it
                 }
             }
         } catch (EOFException e) {
@@ -63,7 +62,7 @@ public class GrepProcess implements MigratableProcess
         } catch (IOException e) {
             System.out.println ("GrepProcess: Error: " + e);
         }
-        
+
 
         suspending = false;
         
