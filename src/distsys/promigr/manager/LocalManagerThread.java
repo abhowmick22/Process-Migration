@@ -63,7 +63,7 @@ public class LocalManagerThread implements Runnable
             case 0 : {
             	try {
     				procId = message.getProcId();
-    				dest = message.getDest();z
+    				dest = message.getDest();
     				System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();

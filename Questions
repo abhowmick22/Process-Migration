@@ -1,2 +1,5 @@
 1. How to achieve IO redirection for interactive processes that have been migrated ?
 2. Is it a good idea to have separate UserManager and ClusterManager ?
+
+1. What do you mean by Class<T>?
+2. Which version of Java should we focus on?
