@@ -78,7 +78,7 @@ public class LocalManagerThread implements Runnable
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
     			    
-    			    Thread.sleep(1000);
+    			    Thread.sleep(1000);  //TODO: remove this - think of something better to delay
     			    outStream.writeObject(echoMsg);
     		        outStream.close();
     		        clientSocket.close();
@@ -103,9 +103,7 @@ public class LocalManagerThread implements Runnable
      
             	 try {
     				procId = message.getProcId();
-            		
-    				
-    				recdProcess = (MigratableProcess) message.getProcess();
+            		recdProcess = (MigratableProcess) message.getProcess();
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
     				Thread processThread = new Thread(recdProcess);

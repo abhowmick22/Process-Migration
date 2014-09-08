@@ -21,16 +21,18 @@ public class GrepProcess implements MigratableProcess
 {
 
     private volatile boolean suspending = false;
-    private int i = 0;
+    private int i;
     public volatile boolean suspended = false;
     private TransactionalFileInputStream inFile;
     private TransactionalFileOutputStream outFile;
     
-    public GrepProcess() throws Exception
+    public GrepProcess(String i) throws Exception
     {
         System.out.println("GREP CREATED!!!!!!-------------");
         inFile = new TransactionalFileInputStream("a.txt");
         outFile = new TransactionalFileOutputStream("b.txt", true);
+        this.i = Integer.parseInt(i);
+        System.out.println("Int passed: "+ i);
     }
 
     
