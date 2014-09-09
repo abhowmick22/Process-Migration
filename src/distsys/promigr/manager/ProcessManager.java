@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class ProcessManager<T>
 {
 
     public static void main(String[] args) throws Exception {
-        
+        /*
         Thread serverThread = new Thread() {
             public void run() {
                 try {
@@ -36,7 +37,7 @@ public class ProcessManager<T>
                 }
             }
         };
-        
+        */
         System.out.println("-----Welcome-----");
         System.out.println("1. Enter ");    //TODO: new process command
         System.out.println("-----Welcome-----");    //TODO: migrate process command
@@ -72,7 +73,7 @@ public class ProcessManager<T>
                 String processName = commandList[1];
                 String procId = processName;    //TODO: change this
                 MigratableProcess inst = manager.init(commandList);
-                Socket clientSocket = new Socket("127.0.0.1", 50000);
+                Socket clientSocket = new Socket(InetAddress.getByName(null), 50000);
 
                 MessageWrap echoMsg = new MessageWrap();
                 echoMsg.setCommand(1);
