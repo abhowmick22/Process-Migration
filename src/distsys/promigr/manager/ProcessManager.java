@@ -9,6 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 //import org.apache.commons.lang.ArrayUtils;
 
@@ -24,6 +27,9 @@ import distsys.promigr.process.MigratableProcess;
 public class ProcessManager<T>
 {
 
+	private int procCount;
+	private Map<String, TableEntry> pmTable;
+	
     public static void main(String[] args) throws Exception {
         /*
         Thread serverThread = new Thread() {
@@ -38,6 +44,7 @@ public class ProcessManager<T>
             }
         };
         */
+    	
         System.out.println("-----Welcome-----");
         System.out.println("1. Enter ");    //TODO: new process command
         System.out.println("-----Welcome-----");    //TODO: migrate process command
@@ -45,6 +52,8 @@ public class ProcessManager<T>
         System.out.println("4. Enter \"help\" for this menu.");    //help
         
         ProcessManager<MigratableProcess> manager = new ProcessManager<MigratableProcess>();
+        manager.procCount = 0;
+        manager.pmTable = new HashMap<String, TableEntry>();
         
         while(true) {
             
@@ -71,14 +80,49 @@ public class ProcessManager<T>
             if(commandList[0].equals("create")) {
                 //create a new process
                 String processName = commandList[1];
-                String procId = processName;    //TODO: change this
+                String procId = "proc" + manager.procCount++;    //TODO: change this
                 MigratableProcess inst = manager.init(commandList);
-                Socket clientSocket = new Socket(InetAddress.getByName(null), 50000);
+                Socket clientSocket = new Socket(commandList[2], 50000);
+                // TODO : Add functionality of user input for port
 
                 MessageWrap echoMsg = new MessageWrap();
                 echoMsg.setCommand(1);
                 echoMsg.setProcId(procId);
                 echoMsg.setMigratableProcess(inst);
+                
+                ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                
+                outStream.writeObject(echoMsg);
+                outStream.close();
+                clientSocket.close();
+                
+                // Update the table
+                TableEntry entry = new TableEntry();
+                entry.setProcessName(processName);
+                entry.setProcId(procId);
+                entry.setNodeName(commandList[2]);
+                entry.setStatus(true);
+                entry.setArguments(Arrays.copyOfRange(commandList, 2, commandList.length - 1));     
+                manager.pmTable.put(procId, entry);
+                
+                
+            }
+            
+            else if(commandList[0].equals("migrate")) {
+                //create a new process
+                String processName = commandList[1];
+                String procId = "proc" + manager.procCount;    //TODO: change this
+                // MigratableProcess inst = manager.init(commandList);
+                // access MigratableProcess inst from table with procId
+                String dest = manager.pmTable.get(procId).getNodeName();
+                // TODO: Check if it exists in table
+                Socket clientSocket = new Socket(dest, 50000);
+
+                
+                MessageWrap echoMsg = new MessageWrap();
+                echoMsg.setCommand(0);
+                echoMsg.setProcId(procId);
+                echoMsg.setDest(commandList[2]);
                 
                 ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
                 

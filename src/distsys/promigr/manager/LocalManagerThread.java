@@ -60,7 +60,7 @@ public class LocalManagerThread implements Runnable
 		}
         
         switch (msg){        
-            case 0 : {
+            case 0 : {						// Migrate process
             	try {
     				procId = message.getProcId();
     				dest = message.getDest();
@@ -95,7 +95,7 @@ public class LocalManagerThread implements Runnable
 				}
             	break;
             }
-            case 1 : {
+            case 1 : {						// Create process
             	
             	MigratableProcess recdProcess;
             	Class<?> myClass;
@@ -120,7 +120,7 @@ public class LocalManagerThread implements Runnable
                 }   	
             	break;
             }
-            case 2 :
+            case 2 :						// Return active list
             	String procName;
             	//while(procName != null)
             	
