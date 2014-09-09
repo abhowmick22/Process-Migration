@@ -44,7 +44,7 @@ public class ProcessManager<T>
             }
         };
         */
-    	
+    	System.out.println(InetAddress.getLocalHost().getHostName());
         System.out.println("-----Welcome-----");
         System.out.println("1. Enter ");    //TODO: new process command
         System.out.println("-----Welcome-----");    //TODO: migrate process command
@@ -100,7 +100,7 @@ public class ProcessManager<T>
                 TableEntry entry = new TableEntry();
                 entry.setProcessName(processName);
                 entry.setProcId(procId);
-                entry.setNodeName(commandList[2]);
+                entry.setNodeName(InetAddress.getLocalHost().getHostName());             
                 entry.setStatus(true);
                 entry.setArguments(Arrays.copyOfRange(commandList, 2, commandList.length - 1));     
                 manager.pmTable.put(procId, entry);
@@ -110,13 +110,15 @@ public class ProcessManager<T>
             
             else if(commandList[0].equals("migrate")) {
                 //create a new process
-                String processName = commandList[1];
-                String procId = "proc" + manager.procCount;    //TODO: change this
+                String procId = commandList[1];
+                //String procId = "proc" + manager.procCount;    //TODO: change this
                 // MigratableProcess inst = manager.init(commandList);
                 // access MigratableProcess inst from table with procId
-                String dest = manager.pmTable.get(procId).getNodeName();
+                //System.out.println(procId);
+                String curr = manager.pmTable.get(procId).getNodeName();
+                
                 // TODO: Check if it exists in table
-                Socket clientSocket = new Socket(dest, 50000);
+                Socket clientSocket = new Socket(curr, 50000);
 
                 
                 MessageWrap echoMsg = new MessageWrap();
@@ -125,6 +127,8 @@ public class ProcessManager<T>
                 echoMsg.setDest(commandList[2]);
                 
                 ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                
+                // Update the table
                 
                 outStream.writeObject(echoMsg);
                 outStream.close();
