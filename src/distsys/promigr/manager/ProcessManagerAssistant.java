@@ -32,11 +32,20 @@ public class ProcessManagerAssistant implements Runnable
         //receive the replies for "ps" command using a different port, 
         //assuming the queued replies from different machines don't overflow the buffer
        
-        
+        ServerSocket serverSocket = null;
         try {
-            ServerSocket serverSocket = new ServerSocket(50001);
-            for(int i=0; i<this.expectedReplies; i++) {
-                Socket clientSocket = serverSocket.accept();
+            serverSocket = new ServerSocket(50001);            
+        }
+        catch (IOException e1) {
+            System.out.println("Some communication/socket exception occured.");
+            return;
+            //TODO: communicate this to ProcessManager
+        }
+        
+        for(int i=0; i<this.expectedReplies; i++) {
+            Socket clientSocket;
+            try {
+                clientSocket = serverSocket.accept();
                 InputStream inputStream = clientSocket.getInputStream();
                 ObjectInputStream objectStream = new ObjectInputStream(inputStream);                
                 MessageWrap message = (MessageWrap) objectStream.readObject();
@@ -51,16 +60,18 @@ public class ProcessManagerAssistant implements Runnable
                 for(String processId : processMap.keySet()) {
                     //update pmTable for reference in ProcessManager
                     this.pmTable.get(processId).setStatus(processMap.get(processId));
-                }                        
+                } 
             }
+            catch (IOException e) {
+                System.out.println("Some communication/socket exception occured.");
+                //TODO: communicate this to ProcessManager
+            }
+            catch (ClassNotFoundException e) {
+                System.out.println("Some communication/socket exception occured.");
+                //TODO: communicate this to ProcessManager
+            }
+                                   
         }
-        catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-        }
-        catch (ClassNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }            
+                   
     }
 }
