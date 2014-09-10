@@ -111,23 +111,24 @@ public class ProcessManager<T>
                     clientSocket.close();
                     
                     //wait till ack is received for this
-                    ServerSocket serverSocket = new ServerSocket(50001);
-                    clientSocket.setSoTimeout(3000); //TODO: test timeout                      
-                    clientSocket = serverSocket.accept();
+//                    ServerSocket serverSocket = new ServerSocket(50001);
+//                    clientSocket.setSoTimeout(3000); //TODO: test timeout                      
+//                    clientSocket = serverSocket.accept();
+//                    
+//                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
+//                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
+//                    if(messageWrap.getCommand() != 4) {
+//                        //TODO: something went wrong. this shouldn't happen. fix it
+//                        continue;
+//                    } else if(!messageWrap.getAck()) {
+//                        //ack failed
+//                        System.out.println("Failed to create process. Destination may be down.");
+//                        continue;
+//                    }
+//                    
+//                    //got acknowledgement of process creation; need to update tables
+//                    System.out.println("Process successfully created.");
                     
-                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
-                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
-                    if(messageWrap.getCommand() != 4) {
-                        //TODO: something went wrong. this shouldn't happen. fix it
-                        continue;
-                    } else if(!messageWrap.getAck()) {
-                        //ack failed
-                        System.out.println("Failed to create process. Destination may be down.");
-                        continue;
-                    }
-                    
-                    //got acknowledgement of process creation; need to update tables
-                    System.out.println("Process successfully created.");                
                     manager.machineAliveMap.put(commandList[1], true);
                     TableEntry entry = new TableEntry();
                     entry.setProcessName(processName);
@@ -144,9 +145,6 @@ public class ProcessManager<T>
                     System.out.println("Can't create process. Some IO problem.");
                 }
                 // TODO : Add functionality of user input for port
-                catch (ClassNotFoundException e) {
-                    System.out.println("Can't create process. Class not found");
-                }
                 
                 
             } else if(commandList[0].equals("migrate")) {
@@ -184,35 +182,36 @@ public class ProcessManager<T>
                     clientSocket.close();
                     
                     //wait till ack is received for this
-                    ServerSocket serverSocket = new ServerSocket(50001); 
-                    clientSocket.setSoTimeout(3000); //TODO: test timeout  
-                    clientSocket = serverSocket.accept();
-                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
-                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
-                    if(messageWrap.getCommand() != 4) {
-                        //TODO: something went wrong. this shouldn't happen. fix it
-                        continue;
-                    } else if(!messageWrap.getAck()) {
-                        //ack failed
-                        System.out.println("Failed to migrate process. Source or destination may be down.");
-                        continue;
-                    }
+//                    ServerSocket serverSocket = new ServerSocket(50001); 
+//                    clientSocket.setSoTimeout(3000); //TODO: test timeout  
+//                    clientSocket = serverSocket.accept();
+//                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
+//                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
+//                    if(messageWrap.getCommand() != 4) {
+//                        //TODO: something went wrong. this shouldn't happen. fix it
+//                        continue;
+//                    } else if(!messageWrap.getAck()) {
+//                        //ack failed
+//                        System.out.println("Failed to migrate process. Source or destination may be down.");
+//                        continue;
+//                    }
+//                    
+//                    //got acknowledgement of migration; now update tables
+//                    System.out.println("Process successfully migrated.");
                     
-                    //got acknowledgement of migration; now update tables
-                    System.out.println("Process successfully migrated.");                
                     manager.machineAliveMap.put(commandList[2], true);
                     manager.pmTable.get(procId).setNodeName(commandList[2]); 
                 }
                 catch (UnknownHostException e) {
-                    System.out.println("Can't migrate process. Unknown host.");
+                    if(manager.machineAliveMap.containsKey(commandList[2])) {
+                        manager.machineAliveMap.put(commandList[2], false);
+                    }
+                    System.out.println("Can't migrate process. Unknown host or host not alive.");
                 }
                 catch (IOException e) {
                     System.out.println("Can't migrate process. Some IO problem.");
                 }
                 // TODO : Add functionality of user input for port
-                catch (ClassNotFoundException e) {
-                    System.out.println("Can't migrate process. Class not found");
-                }
                                                                
             } else if(commandList[0].equals("ps")) {
                 //create the command to be sent to every machine
