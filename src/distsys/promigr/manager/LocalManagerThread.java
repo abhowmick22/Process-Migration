@@ -46,6 +46,7 @@ public class LocalManagerThread implements Runnable
     	MessageWrap message = null;
     	String procId, dest;
     	int msg = -1;
+    	boolean ackTrue;
     	
 		try {
 			inputStream = clientSocket.getInputStream();
@@ -74,11 +75,11 @@ public class LocalManagerThread implements Runnable
     				procId = message.getProcId();
     				dest = message.getDest();
     				String returnAddr = message.getSourceAddr();
-    				System.out.println("avl keys" + threadMap.keySet());
+    				//System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
-    				ServerSocket socket = new ServerSocket(this.serverPort);
+    				ServerSocket socket = new ServerSocket(this.serverPort + 1);
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
     				echoMsg.setProcId(procId);
@@ -98,22 +99,30 @@ public class LocalManagerThread implements Runnable
     				ackIn = new ObjectInputStream(inputStream);
     				try {
 						MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
+						ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
+						ackIn.close();
 						ackSocket.close();
-						Socket returnSocket = new Socket
-						// Now forward the ack message to 
-						
+						socket.close();
+						ackTrue = ackMessage.getAck();
+						Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
+						ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
+						returnOutStream.writeObject(ackMessage);
+						returnOutStream.close();
+						returnSocket.close();
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace()
+						e.printStackTrace();
 					}
     				
     				
-    				socket.close();
+    				
     				
     				// if we receive  positive ack, then update the thread map
+    			if(ackTrue){
     				threadMap.remove(procId);
     				System.out.println("removing keys" + threadMap.keySet());
     				System.out.println(threadMap);
+    			}
     				
     			} catch (IOException e) {
     				// TODO Auto-generated catch block
@@ -132,21 +141,47 @@ public class LocalManagerThread implements Runnable
      
             	 try {
     				procId = message.getProcId();
+    				String returnAddr = message.getSourceAddr();
             		recdProcess = (MigratableProcess) message.getProcess();
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
-    				Thread processThread = new Thread(recdProcess);
-    				
+    				Thread processThread = new Thread(recdProcess);				
     				threadObject.setThread(processThread);
-    				threadMap.put(procId, threadObject);
-    				System.out.println("added keys " + threadMap.keySet());
+    				
     				processThread.start();
     				processThread.join();
+    				
+    				
+    				ackTrue = processThread.isAlive();
+    				MessageWrap ackMessage = new MessageWrap();
+					ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
+					ackMessage.setCommand(4);
+					ackMessage.setAck(ackTrue);
+	
+					Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
+					ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
+					returnOutStream.writeObject(ackMessage);
+					returnOutStream.close();
+					returnSocket.close();
+    				
+
+    				
+    				// if successfully created process, then update the thread map
+					if(ackTrue){
+    				threadMap.put(procId, threadObject);
+    				System.out.println("added keys " + threadMap.keySet());
+					}
     				
     			} catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                }   	
+                } catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}   	
             	break;
             }
             case 2 :						// Return active list in response to a ps command
