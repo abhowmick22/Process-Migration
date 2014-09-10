@@ -218,7 +218,7 @@ public class ProcessManager<T>
                 MessageWrap echoMsg = new MessageWrap();
                 echoMsg.setCommand(2);
                 try {
-                    echoMsg.setDest(InetAddress.getLocalHost().getHostName());
+                    echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
                   //get total number of alive machines
                     int aliveCount = 0;
                     for(Boolean isAlive : manager.machineAliveMap.values()) {
@@ -247,7 +247,7 @@ public class ProcessManager<T>
                     System.out.println("Process ID\t NodeName\t ProcessName\t Arguments");
                     for(String procId : manager.pmTable.keySet()) {
                         TableEntry tableEntry = manager.pmTable.get(procId);
-                        if(!tableEntry.getStatus()) {
+                        if(tableEntry.getStatus()) {
                             //process is alive
                             System.out.println(tableEntry.getProcId()+"\t "+
                                                 tableEntry.getProcessName()+"\t "+

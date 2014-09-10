@@ -56,7 +56,7 @@ public class ProcessManagerAssistant implements Runnable
                     return;
                 }
                 
-                Map<String, Boolean> processMap = (Map<String, Boolean>) objectStream.readObject();
+                Map<String, Boolean> processMap = message.getProcStatus();
                 for(String processId : processMap.keySet()) {
                     //update pmTable for reference in ProcessManager
                     this.pmTable.get(processId).setStatus(processMap.get(processId));

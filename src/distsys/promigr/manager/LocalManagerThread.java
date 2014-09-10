@@ -174,7 +174,7 @@ public class LocalManagerThread implements Runnable
             	break;
             }
             case 2 :						// Return active list in response to a ps command
-            	dest = message.getDest();
+            	dest = message.getSourceAddr();
             	Set<String> processIds = threadMap.keySet();
             	Map<String, Boolean> procStatus = new HashMap<String, Boolean>();
             	String s;
