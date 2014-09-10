@@ -233,7 +233,7 @@ public class ProcessManager<T>
                     continue;
                 }
                 //new Thread to process the reply from every machine
-                ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, aliveCount);
+                ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, manager.machineAliveMap);
                 Thread pmaThread = new Thread(pmAssistant);
                 pmaThread.start();
                                 
@@ -251,9 +251,8 @@ public class ProcessManager<T>
                         System.out.println("IP of "+ machine+" can't be determined.");                            
                     }
                     catch (IOException e) {
-                        //machine dead most likely or lost connectivity before polling could
-                        //update the machineAliveMap
-                        manager.machineAliveMap.put(machine, false);                            
+                        //problem connecting to ProcessManagerAssistant
+                        System.out.println("Socket address may be in use.");      
                     }                                                                                 
                 }
                 

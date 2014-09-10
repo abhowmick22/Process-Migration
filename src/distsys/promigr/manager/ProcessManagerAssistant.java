@@ -15,15 +15,13 @@ import distsys.promigr.process.MessageWrap;
 public class ProcessManagerAssistant implements Runnable
 {
     private ConcurrentMap<String, TableEntry> pmTable;
-    //private ConcurrentMap<String, Boolean> machineAliveMap;
-    private int expectedReplies;
+    private ConcurrentMap<String, Boolean> machineAliveMap;
     
     public ProcessManagerAssistant(ConcurrentMap<String, TableEntry> pmTable,
-      //                             ConcurrentMap<String, Boolean> machineAliveMap, 
-                                   int expectedReplies) {
+                                   ConcurrentMap<String, Boolean> machineAliveMap) 
+    {
         this.pmTable = pmTable;
-        //this.machineAliveMap = machineAliveMap;
-        this.expectedReplies = expectedReplies;
+        this.machineAliveMap = machineAliveMap;
     }
     
     @Override
@@ -42,10 +40,9 @@ public class ProcessManagerAssistant implements Runnable
             //TODO: communicate this to ProcessManager
         }
         
-        for(int i=0; i<this.expectedReplies; i++) {
-            Socket clientSocket;
+        for(String machineName : this.machineAliveMap.keySet()) {
             try {
-                clientSocket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept();
                 InputStream inputStream = clientSocket.getInputStream();
                 ObjectInputStream objectStream = new ObjectInputStream(inputStream);                
                 MessageWrap message = (MessageWrap) objectStream.readObject();
@@ -63,11 +60,18 @@ public class ProcessManagerAssistant implements Runnable
                 } 
             }
             catch (IOException e) {
-                System.out.println("Some communication/socket exception occured.");
-                //TODO: communicate this to ProcessManager
+                //machine dead most likely or lost connectivity before polling could
+                //update the machineAliveMap
+                this.machineAliveMap.put(machineName, false);          
+                //need to update the status of all processes running on this machine
+                for(String procId : this.pmTable.keySet()) {
+                    if(this.pmTable.get(procId).getNodeName().equals(machineName)) {
+                        this.pmTable.get(procId).setStatus(false);
+                    }
+                }
             }
             catch (ClassNotFoundException e) {
-                System.out.println("Some communication/socket exception occured.");
+                System.out.println("Message communication problem. Sorry.");
                 //TODO: communicate this to ProcessManager
             }
                                    
