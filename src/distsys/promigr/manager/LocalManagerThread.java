@@ -42,11 +42,10 @@ public class LocalManagerThread implements Runnable
     	ObjectInputStream in = null;
     	InputStream inputStream = null;
     	ObjectInputStream ackIn = null;
-    	InputStream ackInputStream = null;
     	MessageWrap message = null;
     	String procId, dest;
     	int msg = -1;
-    	boolean ackTrue;
+    	boolean ackTrue = false;
     	
 		try {
 			inputStream = clientSocket.getInputStream();
@@ -79,7 +78,6 @@ public class LocalManagerThread implements Runnable
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
-    				ServerSocket socket = new ServerSocket(this.serverPort + 1);
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
     				echoMsg.setProcId(procId);
@@ -94,10 +92,11 @@ public class LocalManagerThread implements Runnable
     		        clientSocket.close();
     		        
     		        // Wait for ack message
+    		        ServerSocket socket = new ServerSocket(this.serverPort + 1);
     		        Socket ackSocket = socket.accept();
-    		        ackInputStream = ackSocket.getInputStream();
-    				ackIn = new ObjectInputStream(inputStream);
-    				try {
+    				ackIn = new ObjectInputStream(ackSocket.getInputStream());
+    				
+    				
 						MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
 						ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
 						ackIn.close();
@@ -109,14 +108,7 @@ public class LocalManagerThread implements Runnable
 						returnOutStream.writeObject(ackMessage);
 						returnOutStream.close();
 						returnSocket.close();
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    				
-    				
-    				
-    				
+
     				// if we receive  positive ack, then update the thread map
     			if(ackTrue){
     				threadMap.remove(procId);
@@ -124,7 +116,12 @@ public class LocalManagerThread implements Runnable
     				System.out.println(threadMap);
     			}
     				
-    			} catch (IOException e) {
+    			} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	
+            	catch (IOException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
     			} catch (InterruptedException e) {
@@ -149,8 +146,6 @@ public class LocalManagerThread implements Runnable
     				threadObject.setThread(processThread);
     				
     				processThread.start();
-    				processThread.join();
-    				
     				
     				ackTrue = processThread.isAlive();
     				MessageWrap ackMessage = new MessageWrap();
@@ -163,14 +158,14 @@ public class LocalManagerThread implements Runnable
 					returnOutStream.writeObject(ackMessage);
 					returnOutStream.close();
 					returnSocket.close();
-    				
 
-    				
-    				// if successfully created process, then update the thread map
+					// if successfully created process, then update the thread map
 					if(ackTrue){
     				threadMap.put(procId, threadObject);
     				System.out.println("added keys " + threadMap.keySet());
 					}
+					
+					processThread.join();
     				
     			} catch (InterruptedException e) {
                     // TODO Auto-generated catch block
