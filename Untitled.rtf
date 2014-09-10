@@ -49,7 +49,7 @@ TODO:\
 \
 5. Also, when migrating, check if process is alive through thread.isAlive() before migration \
 \
-6. implement polling; when a machine does not repond, update the pmTable entries and the machineAliveMap\
+6. implement polling; when a machine does not respond, update the pmTable entries and the machineAliveMap\
 \
 7. Create executable\
 \
@@ -85,10 +85,12 @@ cache file object.\
 \f0 \cf0 \
 	\
 \
-create ghc42.ghc.andrew.cmu.edu distsys.promigr.manager.GrepProcess query /afs/andrew.cmu.edu/usr11/ndhruva/public/a.txt /afs/andrew.cmu.edu/usr11/ndhruva/public/b.txt\
+create ghc44.ghc.andrew.cmu.edu distsys.promigr.manager.GrepProcess query /afs/andrew.cmu.edu/usr11/ndhruva/public/a.txt /afs/andrew.cmu.edu/usr11/ndhruva/public/b.txt\
 migrate proc0 ghc42.ghc.andrew.cmu.edu\
 ps\
-create ghc42.ghc.andrew.cmu.edu distsys.promigr.manager.GrepProcess query /afs/andrew.cmu.edu/usr11/ndhruva/public/a.txt /afs/andrew.cmu.edu/usr11/ndhruva/public/c.txt\
+create ghc44.ghc.andrew.cmu.edu distsys.promigr.manager.GrepProcess query /afs/andrew.cmu.edu/usr11/ndhruva/public/a.txt /afs/andrew.cmu.edu/usr11/ndhruva/public/c.txt\
+ps\
+migrate proc1 ghc42.ghc.andrew.cmu.edu\
 ps\
 \
 \
