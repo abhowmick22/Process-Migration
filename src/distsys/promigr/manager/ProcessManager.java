@@ -236,7 +236,6 @@ public class ProcessManager<T>
                 ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, manager.machineAliveMap);
                 Thread pmaThread = new Thread(pmAssistant);
                 pmaThread.start();
-                                
                 for(String machine : manager.machineAliveMap.keySet()) {                 
                     //send process list requests to every node                                            
                     try {
@@ -253,14 +252,13 @@ public class ProcessManager<T>
                     catch (IOException e) {
                         //machine dead most likely or lost connectivity before polling could
                         //update the machineAliveMap
-                        manager.machineAliveMap.put(machine, false);          
+                    	manager.machineAliveMap.put(machine, false);          
                         //need to update the status of all processes running on this machine
                         for(String procId : manager.pmTable.keySet()) {
                             if(manager.pmTable.get(procId).getNodeName().equals(machine)) {
                                 manager.pmTable.get(procId).setStatus(false);
                             }
                         }
-                              
                     }                                                                                 
                 }
                 

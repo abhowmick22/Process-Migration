@@ -42,7 +42,11 @@ public class ProcessManagerAssistant implements Runnable
         
         for(String machineName : this.machineAliveMap.keySet()) {
             try {
-                Socket clientSocket = serverSocket.accept();
+            	if(!this.machineAliveMap.get(machineName)) {
+            		continue;
+            	}
+            	serverSocket.setSoTimeout(10000);			//timeout for all connections being closed                
+            	Socket clientSocket = serverSocket.accept();
                 InputStream inputStream = clientSocket.getInputStream();
                 ObjectInputStream objectStream = new ObjectInputStream(inputStream);                
                 MessageWrap message = (MessageWrap) objectStream.readObject();
@@ -59,22 +63,14 @@ public class ProcessManagerAssistant implements Runnable
                     this.pmTable.get(processId).setStatus(processMap.get(processId));
                 } 
             }
-            catch (IOException e) {
-                //machine dead most likely or lost connectivity before polling could
-                //update the machineAliveMap
-                this.machineAliveMap.put(machineName, false);          
-                //need to update the status of all processes running on this machine
-                for(String procId : this.pmTable.keySet()) {
-                    if(this.pmTable.get(procId).getNodeName().equals(machineName)) {
-                        this.pmTable.get(procId).setStatus(false);
-                    }
-                }
-                
-            }
+            
             catch (ClassNotFoundException e) {
                 System.out.println("Message communication problem. Sorry.");
                 //TODO: communicate this to ProcessManager
-            }
+            } catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Cannot service ps command. Connection timed out.");
+			}
                                    
         }
         try {
