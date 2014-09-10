@@ -20,6 +20,19 @@ public class LocalManager
         	
         //create server socket
         //TODO: remove "serverPort" and write 50000?
+        
+        // Set up a polling response thread
+        ServerSocket pollingSocket = null;
+		try {
+			pollingSocket = new ServerSocket(serverPort + 2);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        PollingResponseThread prThread = new PollingResponseThread(pollingSocket);
+        Thread polling = new Thread(prThread);
+        polling.start();
+        
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(serverPort);

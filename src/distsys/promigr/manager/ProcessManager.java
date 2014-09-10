@@ -39,19 +39,6 @@ public class ProcessManager<T>
 	private ConcurrentMap<String, Boolean> machineAliveMap;
 	
     public static void main(String[] args) {
-        /*
-        Thread serverThread = new Thread() {
-            public void run() {
-                try {
-                    LocalManager.main(new String[2]);
-                }
-                catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        };
-        */
         
         System.out.println("-----Welcome-----");
         System.out.println("1. Enter ");    //TODO: new process command
@@ -64,6 +51,10 @@ public class ProcessManager<T>
         manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
         manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
         //TODO: create new thread to poll the machines that will be running processes later
+        
+        PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, 50002);
+        Thread polling = new Thread(prThread);
+        polling.start();
         
         while(true) {
             
