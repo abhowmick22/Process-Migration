@@ -251,8 +251,16 @@ public class ProcessManager<T>
                         System.out.println("IP of "+ machine+" can't be determined.");                            
                     }
                     catch (IOException e) {
-                        //problem connecting to ProcessManagerAssistant
-                        System.out.println("Socket address may be in use.");      
+                        //machine dead most likely or lost connectivity before polling could
+                        //update the machineAliveMap
+                        manager.machineAliveMap.put(machine, false);          
+                        //need to update the status of all processes running on this machine
+                        for(String procId : manager.pmTable.keySet()) {
+                            if(manager.pmTable.get(procId).getNodeName().equals(machine)) {
+                                manager.pmTable.get(procId).setStatus(false);
+                            }
+                        }
+                              
                     }                                                                                 
                 }
                 

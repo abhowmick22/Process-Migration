@@ -69,6 +69,7 @@ public class ProcessManagerAssistant implements Runnable
                         this.pmTable.get(procId).setStatus(false);
                     }
                 }
+                
             }
             catch (ClassNotFoundException e) {
                 System.out.println("Message communication problem. Sorry.");
