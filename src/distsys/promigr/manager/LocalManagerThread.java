@@ -43,7 +43,7 @@ public class LocalManagerThread implements Runnable
     	InputStream inputStream = null;
     	ObjectInputStream ackIn = null;
     	MessageWrap message = null;
-    	String procId, dest;
+    	String procId, dest, returnAddr;
     	int msg = -1;
     	boolean ackTrue = false;
     	
@@ -54,6 +54,7 @@ public class LocalManagerThread implements Runnable
 			
 			message = (MessageWrap) in.readObject();
 			msg = message.getCommand();
+			System.out.println(msg);
 		} catch (IOException e1) {
 			try {
 			    inputStream.close();
@@ -73,7 +74,8 @@ public class LocalManagerThread implements Runnable
             	try {
     				procId = message.getProcId();
     				dest = message.getDest();
-    				String returnAddr = message.getSourceAddr();
+    				returnAddr = message.getSourceAddr();
+    				System.out.println(returnAddr);
     				//System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
@@ -83,6 +85,7 @@ public class LocalManagerThread implements Runnable
     				echoMsg.setProcId(procId);
     				echoMsg.setMigratableProcess(process);
     				echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
+    				System.out.println(echoMsg);
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
     			    
@@ -92,36 +95,33 @@ public class LocalManagerThread implements Runnable
     		        clientSocket.close();
     		        
     		        // Wait for ack message
-    		        ServerSocket socket = new ServerSocket(this.serverPort + 1);
-    		        Socket ackSocket = socket.accept();
-    				ackIn = new ObjectInputStream(ackSocket.getInputStream());
+    		        //ServerSocket socket = new ServerSocket(this.serverPort + 1);
+    		        //Socket ackSocket = socket.accept();
+    				//ackIn = new ObjectInputStream(ackSocket.getInputStream());
     				
     				
-						MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
-						ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
-						ackIn.close();
-						ackSocket.close();
-						socket.close();
-						ackTrue = ackMessage.getAck();
-						Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
-						ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
-						returnOutStream.writeObject(ackMessage);
-						returnOutStream.close();
-						returnSocket.close();
+						//MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
+						//System.out.println("ack message : " + ackMessage);
+//						ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
+//						ackIn.close();
+//						ackSocket.close();
+//						socket.close();
+//						ackTrue = ackMessage.getAck();
+//						System.out.println("ack received is " + ackTrue);
+//						Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
+//						ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
+//						returnOutStream.writeObject(ackMessage);
+//						returnOutStream.close();
+//						returnSocket.close();
 
     				// if we receive  positive ack, then update the thread map
-    			if(ackTrue){
+    			//if(ackTrue){
     				threadMap.remove(procId);
     				System.out.println("removing keys" + threadMap.keySet());
     				System.out.println(threadMap);
-    			}
+    			//}
     				
-    			} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            	
-            	catch (IOException e) {
+    			} catch (IOException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
     			} catch (InterruptedException e) {
@@ -138,7 +138,7 @@ public class LocalManagerThread implements Runnable
      
             	 try {
     				procId = message.getProcId();
-    				String returnAddr = message.getSourceAddr();
+    				returnAddr = message.getSourceAddr();
             		recdProcess = (MigratableProcess) message.getProcess();
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
@@ -147,36 +147,30 @@ public class LocalManagerThread implements Runnable
     				
     				processThread.start();
     				
-    				ackTrue = processThread.isAlive();
-    				MessageWrap ackMessage = new MessageWrap();
-					ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
-					ackMessage.setCommand(4);
-					ackMessage.setAck(ackTrue);
+//    				ackTrue = processThread.isAlive();
+//    				MessageWrap ackMessage = new MessageWrap();
+//					ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
+//					ackMessage.setCommand(4);
+//					ackMessage.setAck(ackTrue);
 	
-					Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
-					ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
-					returnOutStream.writeObject(ackMessage);
-					returnOutStream.close();
-					returnSocket.close();
+//					Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
+//					ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
+//					returnOutStream.writeObject(ackMessage);
+//					returnOutStream.close();
+//					returnSocket.close();
 
 					// if successfully created process, then update the thread map
-					if(ackTrue){
+					//if(ackTrue){
     				threadMap.put(procId, threadObject);
     				System.out.println("added keys " + threadMap.keySet());
-					}
+					//}
 					
 					processThread.join();
     				
     			} catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}   	
+                }   	
             	break;
             }
             case 2 :						// Return active list in response to a ps command
