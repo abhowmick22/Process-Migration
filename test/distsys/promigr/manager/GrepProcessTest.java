@@ -26,7 +26,7 @@ public class GrepProcessTest
         threadMap = new ConcurrentHashMap<String, ThreadObject>();
         GrepProcess gp = null;
         try {
-            gp = new GrepProcess("0");
+            gp = new GrepProcess(new String[2]);
         }
         catch (Exception e2) {
             // TODO Auto-generated catch block

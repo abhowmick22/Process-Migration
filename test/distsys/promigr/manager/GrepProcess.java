@@ -26,7 +26,7 @@ public class GrepProcess implements MigratableProcess
 
     private volatile boolean suspending;
 
-    public GrepProcess(String args[]) throws Exception
+    public GrepProcess(String[] args) throws Exception
     {
         if (args.length != 3) {
             System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");

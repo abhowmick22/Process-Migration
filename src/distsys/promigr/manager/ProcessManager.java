@@ -92,7 +92,7 @@ public class ProcessManager<T>
                 String processName = commandList[2];
                 String procId = "proc" + manager.procCount++;    //TODO: change this
                 MigratableProcess inst = manager.init(commandList);
-                if(inst.equals(null)) {
+                if(inst == null) {
                     System.out.println("Could not create process. May not be implementing MigratableProcess");
                     continue;
                 }
@@ -285,11 +285,14 @@ public class ProcessManager<T>
             return null;
         }
         
-        Class<?>[] classArray = new Class[args.length-3];
-        String[] argsArray = new String[args.length-3];
+        //Class<?>[] classArray = new Class[args.length-3];
+        Class<?>[] classArray = new Class[] {String[].class};
+        String[] argsArray = new String[args.length - 3];
+        //argsArray = Arrays.copyOfRange(args, 3, args.length - 1);
+        //create node distsys.promigr.manager.GrepProcess query a b
         //TODO: arraycopy
         for(int i=3;i<args.length;i++) {
-            classArray[i-3] = String.class;
+            //classArray[i-3] = String.class;
             argsArray[i-3] = args[i];
         }
         Constructor<?> constructor;
@@ -306,9 +309,10 @@ public class ProcessManager<T>
         }
         T inst = null;
         try {
-            inst = (T) constructor.newInstance(argsArray);
+            inst = (T) constructor.newInstance((Object) argsArray);
         }
         catch (IllegalArgumentException e) {
+            e.printStackTrace();
             System.out.println("Illegal args.");
             return null;
         }
