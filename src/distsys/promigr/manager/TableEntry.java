@@ -27,7 +27,7 @@ private static final long serialVersionUID = 1L;
         return this.nodeName;
     }
     
-    public boolean getStatus (int command) {
+    public boolean getStatus () {
         return this.status;
     }
     

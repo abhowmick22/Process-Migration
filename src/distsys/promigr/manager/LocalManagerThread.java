@@ -8,10 +8,18 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
@@ -32,9 +40,10 @@ public class LocalManagerThread implements Runnable
     public void run()
     {
     	ObjectInputStream in = null;
-    	MessageWrap message = null;
-    	int port = 50000;
     	InputStream inputStream = null;
+    	ObjectInputStream ackIn = null;
+    	InputStream ackInputStream = null;
+    	MessageWrap message = null;
     	String procId, dest;
     	int msg = -1;
     	
@@ -64,17 +73,17 @@ public class LocalManagerThread implements Runnable
             	try {
     				procId = message.getProcId();
     				dest = message.getDest();
+    				String returnAddr = message.getSourceAddr();
     				System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
-    				//PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
-    				//printWriter.write("1");
-    				//printWriter.write(procId);
+    				ServerSocket socket = new ServerSocket(this.serverPort);
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
     				echoMsg.setProcId(procId);
     				echoMsg.setMigratableProcess(process);
+    				echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
     			    
@@ -82,6 +91,26 @@ public class LocalManagerThread implements Runnable
     			    outStream.writeObject(echoMsg);
     		        outStream.close();
     		        clientSocket.close();
+    		        
+    		        // Wait for ack message
+    		        Socket ackSocket = socket.accept();
+    		        ackInputStream = ackSocket.getInputStream();
+    				ackIn = new ObjectInputStream(inputStream);
+    				try {
+						MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
+						ackSocket.close();
+						Socket returnSocket = new Socket
+						// Now forward the ack message to 
+						
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace()
+					}
+    				
+    				
+    				socket.close();
+    				
+    				// if we receive  positive ack, then update the thread map
     				threadMap.remove(procId);
     				System.out.println("removing keys" + threadMap.keySet());
     				System.out.println(threadMap);
@@ -120,10 +149,39 @@ public class LocalManagerThread implements Runnable
                 }   	
             	break;
             }
-            case 2 :						// Return active list
-            	String procName;
-            	//while(procName != null)
+            case 2 :						// Return active list in response to a ps command
+            	dest = message.getDest();
+            	Set<String> processIds = threadMap.keySet();
+            	Map<String, Boolean> procStatus = new HashMap<String, Boolean>();
+            	String s;
+            	Iterator<String> iter = processIds.iterator();
+            	while (iter.hasNext()) {
+            		ThreadObject t = threadMap.get(s = iter.next());
+            	    if (t.getThread().isAlive()) {
+            	        procStatus.put(s, true);
+            	    }
+            	    else{
+            	    	procStatus.put(s, false);
+            	    	iter.remove();
+            	    }
+            	}
             	
+				try {
+					Socket clientSocket = new Socket(dest, this.serverPort + 1);
+					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+					MessageWrap psMsg = new MessageWrap();
+					psMsg.setCommand(5);
+					psMsg.setProcStatus(procStatus);
+					outStream.writeObject(psMsg);
+			        outStream.close();
+			        clientSocket.close();
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}       	
             	
             	break;
             
