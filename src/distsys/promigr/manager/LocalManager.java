@@ -19,14 +19,13 @@ public class LocalManager
         threadMap = new ConcurrentHashMap<String, ThreadObject>();
         	
         //create server socket
+        //TODO: remove "serverPort" and write 50000?
         ServerSocket serverSocket = new ServerSocket(serverPort);          
         while(true) {
-            synchronized(LocalManager.class) {
-                 Socket clientSocket = serverSocket.accept();
-                 LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap, serverPort);
-                 Thread thread = new Thread(lmthread);
-                 thread.start();
-            }
+            Socket clientSocket = serverSocket.accept();
+            LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap, serverPort);
+            Thread thread = new Thread(lmthread);
+            thread.start();            
         }
         
     }
