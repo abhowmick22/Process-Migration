@@ -216,57 +216,70 @@ public class ProcessManager<T>
             } else if(commandList[0].equals("ps")) {
                 //create the command to be sent to every machine
                 MessageWrap echoMsg = new MessageWrap();
+                //get total number of alive machines
+                int aliveCount = 0;                
+                for(Boolean isAlive : manager.machineAliveMap.values()) {
+                    if(isAlive) {
+                        aliveCount++;
+                    }
+                }
+                
                 echoMsg.setCommand(2);
                 try {
                     echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
-                  //get total number of alive machines
-                    int aliveCount = 0;
-                    for(Boolean isAlive : manager.machineAliveMap.values()) {
-                        if(isAlive) {
-                            aliveCount++;
-                        }
-                    }
-                    
-                    //new Thread to process the reply from every machine                
-                    ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, aliveCount);
-                    Thread pmaThread = new Thread(pmAssistant);
-                    pmaThread.start();
-                    //send process list requests to every node
-                    for(String machine : manager.machineAliveMap.keySet()) {
+                }
+                catch (UnknownHostException e1) {
+                    System.out.println("Cannot get local host information.");
+                    continue;
+                }
+                //new Thread to process the reply from every machine
+                ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, aliveCount);
+                Thread pmaThread = new Thread(pmAssistant);
+                pmaThread.start();
+                                
+                for(String machine : manager.machineAliveMap.keySet()) {                 
+                    //send process list requests to every node                                            
+                    try {
                         Socket clientSocket = new Socket(machine, 50000);
                         ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
                         outStream.writeObject(echoMsg);
                         outStream.close();
-                        clientSocket.close();                    
-                    }                
-                    //wait till all requests have been responded to
-                    pmaThread.join();
-                    
-                    //pmTable updated; now print the details of all processes
-                    System.out.println("List of active processes:");
-                    System.out.println("Process ID\t NodeName\t ProcessName\t Arguments");
-                    for(String procId : manager.pmTable.keySet()) {
-                        TableEntry tableEntry = manager.pmTable.get(procId);
-                        if(tableEntry.getStatus()) {
-                            //process is alive
-                            System.out.println(tableEntry.getProcId()+"\t "+
-                                                tableEntry.getProcessName()+"\t "+
-                                                tableEntry.getNodeName()+"\t "+
-                                                Arrays.toString(tableEntry.getArguments()));
-                            
-                        }
+                        clientSocket.close();   
                     }
+                    catch (UnknownHostException e) {
+                        //shouldn't occur
+                        System.out.println("IP of "+ machine+" can't be determined.");                            
+                    }
+                    catch (IOException e) {
+                        //machine dead most likely or lost connectivity before polling could
+                        //update the machineAliveMap
+                        manager.machineAliveMap.put(machine, false);                            
+                    }                                                                                 
                 }
-                catch (UnknownHostException e) {
-                    System.out.println("Can't generate list. Uknown host.");
-                }
-                catch (IOException e) {
-                    System.out.println("Can't generate list. IO problem.");
+                
+                //wait till all requests have been responded to                
+                try {
+                    pmaThread.join();
                 }
                 catch (InterruptedException e) {
-                    System.out.println("Can't generate list. Process interrupted.");
+                    System.out.println("Thread interrupted.");
+                    //TODO: need anything else to be done?
                 }
-                                                
+                
+                //pmTable updated; now print the details of all processes
+                System.out.println("List of active processes:");
+                System.out.println("Process ID\t NodeName\t ProcessName\t Arguments");
+                for(String procId : manager.pmTable.keySet()) {
+                    TableEntry tableEntry = manager.pmTable.get(procId);
+                    if(tableEntry.getStatus()) {
+                        //process is alive
+                        System.out.println(tableEntry.getProcId()+"\t "+
+                                            tableEntry.getProcessName()+"\t "+
+                                            tableEntry.getNodeName()+"\t "+
+                                            Arrays.toString(tableEntry.getArguments()));
+                        
+                    }
+                }                               
             }
             
         }
