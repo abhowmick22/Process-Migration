@@ -76,6 +76,11 @@ public class ProcessManagerAssistant implements Runnable
             }
                                    
         }
-                   
+        try {
+            serverSocket.close();
+        }
+        catch (IOException e) {
+            System.out.println("Problem closing socket. Might make \"ps\" command useless.");
+        }
     }
 }
