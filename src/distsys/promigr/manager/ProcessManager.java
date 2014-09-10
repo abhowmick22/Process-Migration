@@ -285,8 +285,8 @@ public class ProcessManager<T>
             return null;
         }
         
-        Class<?>[] classArray = new Class[args.length-2];
-        String[] argsArray = new String[args.length-2];
+        Class<?>[] classArray = new Class[args.length-3];
+        String[] argsArray = new String[args.length-3];
         //TODO: arraycopy
         for(int i=3;i<args.length;i++) {
             classArray[i-3] = String.class;
