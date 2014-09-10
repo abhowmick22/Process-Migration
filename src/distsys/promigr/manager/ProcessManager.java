@@ -89,7 +89,7 @@ public class ProcessManager<T>
             
             if(commandList[0].equals("create")) {
                 //create a new process
-                String processName = commandList[1];
+                String processName = commandList[2];
                 String procId = "proc" + manager.procCount++;    //TODO: change this
                 MigratableProcess inst = manager.init(commandList);
                 if(inst.equals(null)) {
@@ -98,7 +98,7 @@ public class ProcessManager<T>
                 }
                 
                 try {
-                    Socket clientSocket = new Socket(commandList[2], 50000);
+                    Socket clientSocket = new Socket(commandList[1], 50000);
                     MessageWrap echoMsg = new MessageWrap();
                     echoMsg.setCommand(1);
                     echoMsg.setProcId(procId);
@@ -128,13 +128,13 @@ public class ProcessManager<T>
                     
                     //got acknowledgement of process creation; need to update tables
                     System.out.println("Process successfully created.");                
-                    manager.machineAliveMap.put(commandList[2], true);
+                    manager.machineAliveMap.put(commandList[1], true);
                     TableEntry entry = new TableEntry();
                     entry.setProcessName(processName);
                     entry.setProcId(procId);
-                    entry.setNodeName(commandList[2]);             
+                    entry.setNodeName(commandList[1]);             
                     entry.setStatus(true);
-                    entry.setArguments(Arrays.copyOfRange(commandList, 2, commandList.length - 1));     
+                    entry.setArguments(Arrays.copyOfRange(commandList, 3, commandList.length - 1));     
                     manager.pmTable.put(procId, entry);
                 }
                 catch (UnknownHostException e) {
@@ -278,7 +278,7 @@ public class ProcessManager<T>
         
         Class<?> clazz;
         try {
-            clazz = Class.forName(args[1]);
+            clazz = Class.forName(args[2]);
         }
         catch (ClassNotFoundException e) {
             System.out.println("Class not found.");
@@ -288,9 +288,9 @@ public class ProcessManager<T>
         Class<?>[] classArray = new Class[args.length-2];
         String[] argsArray = new String[args.length-2];
         //TODO: arraycopy
-        for(int i=2;i<args.length;i++) {
-            classArray[i-2] = String.class;
-            argsArray[i-2] = args[i];
+        for(int i=3;i<args.length;i++) {
+            classArray[i-3] = String.class;
+            argsArray[i-3] = args[i];
         }
         Constructor<?> constructor;
         try {

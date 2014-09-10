@@ -20,23 +20,25 @@ import distsys.promigr.process.MigratableProcess;
 public class GrepProcess implements MigratableProcess
 {
 
-    private volatile boolean suspending = false;
-    private int i;
-    public volatile boolean suspended = false;
-    private TransactionalFileInputStream inFile;
+    private TransactionalFileInputStream  inFile;
     private TransactionalFileOutputStream outFile;
-    
-    public GrepProcess(String i) throws Exception
+    private String query;
+
+    private volatile boolean suspending;
+
+    public GrepProcess(String args[]) throws Exception
     {
-        System.out.println("GREP CREATED!!!!!!-------------");
-        inFile = new TransactionalFileInputStream("a.txt");
-        outFile = new TransactionalFileOutputStream("b.txt", true);
-        this.i = Integer.parseInt(i);
-        System.out.println("Int passed: "+ i);
+        if (args.length != 3) {
+            System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
+            throw new Exception("Invalid Arguments");
+            //TODO: handle this exception in localmanagerthread.java
+        }
+        
+        query = args[0];
+        inFile = new TransactionalFileInputStream(args[1]);
+        outFile = new TransactionalFileOutputStream(args[2], false);
     }
 
-    
-    @Override
     public void run()
     {
         PrintStream out = new PrintStream(outFile);
@@ -48,13 +50,14 @@ public class GrepProcess implements MigratableProcess
 
                 if (line == null) break;
                 
-                System.out.println(line);
-                out.println(line);
-                
+                //ND: if (line.contains(query)) {
+                    out.println(line);
+                    System.out.println(line);   //ND
+                //ND: }
                 
                 // Make grep take longer so that we don't require extremely large files for interesting results
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     // ignore it
                 }
@@ -67,16 +70,12 @@ public class GrepProcess implements MigratableProcess
 
 
         suspending = false;
-        
-       
     }
 
-    @Override
     public void suspend()
     {
         suspending = true;
-        while(suspending);        
-        
+        while (suspending);
     }
  
 
