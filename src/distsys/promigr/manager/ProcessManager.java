@@ -40,24 +40,23 @@ public class ProcessManager<T>
 	
     public static void main(String[] args) {
         
+    	ProcessManager<MigratableProcess> manager = new ProcessManager<MigratableProcess>();
+        manager.procCount = 0;
+        manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
+        manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
+        //TODO: create new thread to poll the machines that will be running processes later
+    	
+    	PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, manager.pmTable, 50002);
+    	Thread polling = new Thread(prThread);
+      	polling.start();
+    	
         System.out.println("-----Welcome-----");
         System.out.println("1. Enter ");    //TODO: new process command
         System.out.println("-----Welcome-----");    //TODO: migrate process command
         System.out.println("-----Welcome-----");    //TODO: process list
         System.out.println("4. Enter \"help\" for this menu.");    //help
-        
-        ProcessManager<MigratableProcess> manager = new ProcessManager<MigratableProcess>();
-        manager.procCount = 0;
-        manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
-        manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
-        //TODO: create new thread to poll the machines that will be running processes later
-        
-        PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, 50002);
-        Thread polling = new Thread(prThread);
-        polling.start();
-        
-        while(true) {
-            
+   
+        while(true) {          
             String command = "";
             
             System.out.print(">");
