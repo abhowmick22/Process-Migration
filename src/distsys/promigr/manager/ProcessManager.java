@@ -163,8 +163,25 @@ public class ProcessManager<T>
                     continue;
                 }
                 
+                //check if the destination to which the user is migrating the process is active.
+                //if not, don't migrate the process
+                Socket clientSocket;
                 try {
-                    Socket clientSocket = new Socket(curr, 50000);
+                    clientSocket = new Socket(commandList[2], 50000);
+                    clientSocket.close();
+                }
+                catch (UnknownHostException e1) {
+                    System.out.println("Can't resolve IP of destination you are trying to migrate to.");
+                    continue;
+                }
+                catch (IOException e1) {
+                    System.out.println("Seems the destination to which you are migrating is down.");
+                    continue;
+                }
+                
+                //migrate the process
+                try {
+                    clientSocket = new Socket(curr, 50000);
                     MessageWrap echoMsg = new MessageWrap();
                     echoMsg.setCommand(0);
                     echoMsg.setProcId(procId);
@@ -198,13 +215,10 @@ public class ProcessManager<T>
                     manager.pmTable.get(procId).setNodeName(commandList[2]); 
                 }
                 catch (UnknownHostException e) {
-                    if(manager.machineAliveMap.containsKey(commandList[2])) {
-                        manager.machineAliveMap.put(commandList[2], false);
-                    }
-                    System.out.println("Can't migrate process. Unknown host or host not alive.");
+                    System.out.println("Can't migrate process. Can't resolve IP address.");
                 }
                 catch (IOException e) {
-                    System.out.println("Can't migrate process. Some IO problem.");
+                    System.out.println("Can't migrate process. Socket connection problem.");
                 }
                 // TODO : Add functionality of user input for port
                                                                
