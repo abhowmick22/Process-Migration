@@ -90,8 +90,8 @@ Say you are running local manager on
 	----This will print the list of processes currently running, along with the node name, process name and arguments
 \f1 \
 
-\f0 4. create ghc53.ghc.andrew.cmu.edu distsys.promigr.test.GrepProcess Pittsburgh ./run/in.txt ./run/out.txt\
-	----This will create a new process GrepProcess on node ghc53.ghc.andrew.cmu.edu. GrepProcess will read from in.txt and write to out.txt in the run directory. It will be assigned process Id proc1\
+\f0 4. create ghc53.ghc.andrew.cmu.edu distsys.promigr.test.GrepProcess the ./run/in.txt ./run/out.txt\
+	----This will create a new process GrepProcess on node ghc53.ghc.andrew.cmu.edu. GrepProcess will read from in.txt and write all lines containing 'the' to out.txt in the run directory. It will be assigned process Id proc1\
 5. ps\
 	----Lists proc0 and proc1 and relevant data\
 6. migrate proc0 ghc53.ghc.andrew.cmu.edu\
@@ -104,4 +104,8 @@ Say you are running local manager on
 	----Migrates proc2 to ghc52.ghc.andrew.cmu.edu\
 10. ps\
 	----Lists all the currently executing processes on all active nodes\
-}
+\
+\
+TEXT FILE SOURCE:\
+\
+Text files for testing obtained form http://textfiles.com/news/}
