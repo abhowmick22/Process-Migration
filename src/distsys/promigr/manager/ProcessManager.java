@@ -51,10 +51,11 @@ public class ProcessManager<T>
       	polling.start();
     	
         System.out.println("-----Welcome-----");
-        System.out.println("1. Enter ");    //TODO: new process command
-        System.out.println("-----Welcome-----");    //TODO: migrate process command
-        System.out.println("-----Welcome-----");    //TODO: process list
-        System.out.println("4. Enter \"help\" for this menu.");    //help
+        System.out.println("-----Following are the commands that are available to you-----");
+        System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the node-name");    //TODO: new process command
+        System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
+        System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
+        System.out.println("4. Help: \"help\" - Gives this menu.");    //help
    
         while(true) {          
             String command = "";
@@ -127,6 +128,8 @@ public class ProcessManager<T>
                     entry.setStatus(true);
                     entry.setArguments(Arrays.copyOfRange(commandList, 3, commandList.length - 1));     
                     manager.pmTable.put(procId, entry);
+                    
+                    System.out.println("Please refer to this process as: " + procId);
                 }
                 catch (UnknownHostException e) {
                     System.out.println("Can't create process. Unknown host.");                    
@@ -268,13 +271,22 @@ public class ProcessManager<T>
                     TableEntry tableEntry = manager.pmTable.get(procId);
                     if(tableEntry.getStatus()) {
                         //process is alive
-                        System.out.println(tableEntry.getProcId()+"\t "+
-                                            tableEntry.getProcessName()+"\t "+
-                                            tableEntry.getNodeName()+"\t "+
+                        System.out.println(tableEntry.getProcId()+" |\t "+
+                                            tableEntry.getNodeName()+" |\t "+
+                                            tableEntry.getProcessName()+" |\t "+
                                             Arrays.toString(tableEntry.getArguments()));
                         
                     }
-                }                               
+                }                                
+            } else if(commandList[0].equals("help")) {
+                System.out.println("-----Following are the commands that are available to you-----");
+                System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the node-name");    //TODO: new process command
+                System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
+                System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
+                System.out.println("4. Help: \"help\" - Gives this menu.");    //help
+                
+            } else {
+                System.out.println("Command not found. Enter \"help\" to get list of commands.");
             }
             
         }

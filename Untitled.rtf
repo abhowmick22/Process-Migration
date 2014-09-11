@@ -45,7 +45,7 @@ TODO:\
 \
 ---4. implement ack in ProcessManager with timeout --> can be implemented through ProcessManagerAssitant\
 \
-5. Also, when migrating, check if process is alive through thread.isAlive() before migration. In proc manager, check if status is true. \
+---5. Also, when migrating, check if process is alive through thread.isAlive() before migration. In proc manager, check if status is true. -- user should check with ps if it actually migrated\
 \
 ---6. implement polling; when a machine does not respond, update the pmTable entries and the machineAliveMap\
 \
@@ -57,7 +57,7 @@ TODO:\
 \
 10. write documentation and comments\
 \
-11. print procid\
+---11. print procid\
 \
 12. create test cases\
 \
@@ -66,7 +66,9 @@ TODO:\
 \pard\pardeftab720
 \cf0 cache file object.\
 \
-14. make sure you are printing the headlines and the content of "ps" in the same order.\
+---14. make sure you are printing the headlines and the content of "ps" in the same order.\
+\
+localmanagerthread - handle exception thrown by user process\
 \
 TODOs:\
 ---filename for grep process\

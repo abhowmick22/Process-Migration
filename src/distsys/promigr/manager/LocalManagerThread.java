@@ -76,6 +76,14 @@ public class LocalManagerThread implements Runnable
     				System.out.println(returnAddr);
     				//System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
+    				if(!(this.threadMap.get(procId).getThread().isAlive())) {
+    				    //the thread is no longer active. hence the process terminated
+    				    //TODO: ack? or just mention in report that there should be an ack but there isn't.
+    				    //      hence user has to reply on ps to check if the process migrated
+    				    //      also, we assume that polling is quick enough to assume that it has updated status of finished process
+    				    return;
+    				}
+    				
     				process.suspend();
     				Socket clientSocket = new Socket(dest, this.serverPort);
     				MessageWrap echoMsg = new MessageWrap();
@@ -122,10 +130,11 @@ public class LocalManagerThread implements Runnable
     			} catch (IOException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
-    			} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+    			}
+                catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } 
             	break;
             }
             case 1 : {						// Create process
