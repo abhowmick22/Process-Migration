@@ -56,6 +56,7 @@ public class PollingRequestThread implements Runnable{
                     }
                 }
 				System.out.println(currMachine + " is down. Oh no.");
+				System.out.println(">");
 				//e.printStackTrace();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

@@ -17,7 +17,9 @@ In order to build the framework, execute the following command:\
 
 \f1 \
 \pard\pardeftab720
-\cf0 	ant clean compile jar\
+\cf0 	
+\b ant clean compile jar
+\b0 \
 \
 This creates an executable jar in ./build/jar\
 \
@@ -28,11 +30,15 @@ All the commands below are relative to the directory where the src, run, and the
 \
 After running the build command above, run the following command on every node that should act as a local manager (slave):\
 \
-	java -cp ./build/jar/ProMigrate.jar distsys.promigr.manager.LocalManager\
+	
+\b java -cp ./build/jar/ProMigrate.jar distsys.promigr.manager.LocalManager
+\b0 \
 \
 Finally, select a node for running the master process manager (and the user interface) and run the following command:\
 \
-	java -cp ./build/jar/ProMigrate.jar distsys.promigr.manager.ProcessManager\
+	
+\b java -cp ./build/jar/ProMigrate.jar distsys.promigr.manager.ProcessManager
+\b0 \
 \
 \
 COMMAND SYNTAX:\
@@ -40,12 +46,12 @@ COMMAND SYNTAX:\
 \pard\pardeftab720
 \cf2 1. Create process:   
 \b \cf0 create
-\b0   
-\b node-name  process-name  argument-list...
+\b0  
+\b node-name process-name argument-list...
 \b0 \cf2 \
 	creates a new process process-name on the node node-name\
 2. Migrate process:   
-\b \cf0 migrate  process-id  destination-node\
+\b \cf0 migrate process-id destination-node\
 
 \b0 \cf2 	migrates process with ID process-id to node destination-node. The process ID will be generated and given to you when the process is created for the first time.\
 3. List processes:   

@@ -36,6 +36,7 @@ public class ProcessManagerAssistant implements Runnable
         }
         catch (IOException e1) {
             System.out.println("Some communication/socket exception occured.");
+            System.out.println(">");
             return;
             //TODO: communicate this to ProcessManager
         }
@@ -66,10 +67,12 @@ public class ProcessManagerAssistant implements Runnable
             
             catch (ClassNotFoundException e) {
                 System.out.println("Message communication problem. Sorry.");
+                System.out.println(">");
                 //TODO: communicate this to ProcessManager
             } catch (IOException e) {
 				// TODO Auto-generated catch block
 				System.out.println("Connection timed out. All hosts may be down or connection problem.");
+				System.out.println(">");
 			}
                                    
         }
@@ -78,6 +81,7 @@ public class ProcessManagerAssistant implements Runnable
         }
         catch (IOException e) {
             System.out.println("Problem closing socket. Might make \"ps\" command useless.");
+            System.out.println(">");
         }
     }
 }
