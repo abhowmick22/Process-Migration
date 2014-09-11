@@ -92,11 +92,13 @@ public class LocalManagerThread implements Runnable
     				echoMsg.setProcId(procId);
     				echoMsg.setMigratableProcess(process);
     				echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
-    				//System.out.println(echoMsg);
+    				
+    				//wait for the process to finish before serializing
+    				this.threadMap.get(procId).getThread().join(1000);  //assume the thread joins within this time
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-    			    
-    			    Thread.sleep(1000);  //TODO: remove this - think of something better to delay
+    			    System.out.println("migrated "+procId);
+    			    //Thread.sleep(1000);  //TODO: remove this - think of something better to delay
     			    outStream.writeObject(echoMsg);
     		        outStream.close();
     		        clientSocket.close();
