@@ -84,9 +84,9 @@ public class LocalManagerThread implements Runnable
     				    return;
     				}
     				
-    				process.suspend();
-    				
     				Socket clientSocket = new Socket(dest, this.serverPort);
+    				
+    				process.suspend();
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
     				echoMsg.setProcId(procId);

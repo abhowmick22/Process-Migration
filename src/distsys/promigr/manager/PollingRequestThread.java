@@ -28,7 +28,7 @@ public class PollingRequestThread implements Runnable{
 		String currMachine = null;
 		while(true){
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(2500);
 				
 				// start polling
 				//System.out.println("polling loop");
