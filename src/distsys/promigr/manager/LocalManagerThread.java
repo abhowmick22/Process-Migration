@@ -52,7 +52,7 @@ public class LocalManagerThread implements Runnable
 			
 			message = (MessageWrap) in.readObject();
 			msg = message.getCommand();
-			System.out.println(msg);
+			//System.out.println(msg);
 		} catch (IOException e1) {
 			try {
 			    inputStream.close();
@@ -73,7 +73,7 @@ public class LocalManagerThread implements Runnable
     				procId = message.getProcId();
     				dest = message.getDest();
     				returnAddr = message.getSourceAddr();
-    				System.out.println(returnAddr);
+    				//System.out.println(returnAddr);
     				//System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
     				if(!(this.threadMap.get(procId).getThread().isAlive())) {
@@ -92,7 +92,7 @@ public class LocalManagerThread implements Runnable
     				echoMsg.setProcId(procId);
     				echoMsg.setMigratableProcess(process);
     				echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
-    				System.out.println(echoMsg);
+    				//System.out.println(echoMsg);
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
     			    
@@ -124,8 +124,8 @@ public class LocalManagerThread implements Runnable
     				// if we receive  positive ack, then update the thread map
     			//if(ackTrue){
     				threadMap.remove(procId);
-    				System.out.println("removing keys" + threadMap.keySet());
-    				System.out.println(threadMap);
+    				//System.out.println("removing keys" + threadMap.keySet());
+    				//System.out.println(threadMap);
     			//}
     				
     			} catch (IOException e) {
@@ -170,7 +170,7 @@ public class LocalManagerThread implements Runnable
 					// if successfully created process, then update the thread map
 					//if(ackTrue){
     				threadMap.put(procId, threadObject);
-    				System.out.println("added keys " + threadMap.keySet());
+    				//System.out.println("added keys " + threadMap.keySet());
 					//}
 					
 					processThread.join();

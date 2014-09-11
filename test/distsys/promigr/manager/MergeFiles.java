@@ -32,7 +32,7 @@ public class MergeFiles implements MigratableProcess
 
     public MergeFiles(String[] args) throws Exception
     {
-        if (args.length != 3) {
+        if (args.length != 4) {
             System.out.println("usage: MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
             throw new Exception("Invalid Arguments");
             //TODO: handle this exception in localmanagerthread.java
