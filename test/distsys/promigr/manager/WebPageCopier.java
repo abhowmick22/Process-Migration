@@ -45,7 +45,7 @@ public class WebPageCopier implements MigratableProcess {
                 if (line == null) break;
                 
                 out.println(line);                
-                this.skip+=line.length();
+                this.skip+=line.length()+1;
                 // Make process take longer so that we don't require extremely large files for interesting results
                 in.close();                
                 try {

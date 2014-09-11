@@ -33,7 +33,7 @@ procID       processName       arguments         nodeName           status\
 \
 TODO:\
 ---1. create a ConcurrentHashMap<Machines> of list of machines in PM. Spawn a thread, make it poll the machines and update the map -> implement the response in LocalManagerThread.java with command 3\
-2---. command "ps" in ProcManager:\
+---2. command "ps" in ProcManager:\
 	run through the ConcurrentHashMap<Machines> of machines, send a command to the machine (check timeout of socket)\
 		wait for each machine to reply. get list of procId's from each machine\
 	print all the info of each active process to the user\
@@ -59,7 +59,7 @@ TODO:\
 \
 ---11. print procid\
 \
-12. create test cases\
+----12. create test cases\
 \
 13 create report - 
 \f1 system design diagram in report. also answer all questions in the handout. also give instructions on how to run the code. MAVEN. comment code and documentation\
