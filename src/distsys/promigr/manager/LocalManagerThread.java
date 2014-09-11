@@ -97,7 +97,7 @@ public class LocalManagerThread implements Runnable
     				this.threadMap.get(procId).getThread().join(1000);  //assume the thread joins within this time
     				
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-    			    System.out.println("migrated "+procId);
+    			    //System.out.println("migrated "+procId);
     			    //Thread.sleep(1000);  //TODO: remove this - think of something better to delay
     			    outStream.writeObject(echoMsg);
     			    outStream.flush();
