@@ -81,7 +81,7 @@ public class ProcessManager<T>
             if(commandList[0].equals("create")) {
                 //create a new process
                 String processName = commandList[2];
-                String procId = "proc" + manager.procCount++;    //TODO: change this
+                String procId = "proc" + manager.procCount;    //TODO: change this
                 MigratableProcess inst = manager.init(commandList);
                 if(inst == null) {
                     System.out.println("Could not create process. May not be implementing MigratableProcess");
@@ -130,10 +130,10 @@ public class ProcessManager<T>
                     manager.pmTable.put(procId, entry);
                     
                     System.out.println("Please refer to this process as: " + procId);
+                    manager.procCount++;
                 }
                 catch (IOException e) {
-                    System.out.println("Can't create process because can't connect to host.");
-                    manager.procCount--;
+                    System.out.println("Can't create process because can't connect to host.");                    
                 }
                 // TODO : Add functionality of user input for port
                 
