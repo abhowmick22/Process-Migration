@@ -52,10 +52,14 @@ public class ProcessManager<T>
     	
         System.out.println("-----Welcome-----");
         System.out.println("-----Following are the commands that are available to you-----");
-        System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the node-name");    //TODO: new process command
+        System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the machine node-name");    //TODO: new process command
         System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
         System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
         System.out.println("4. Help: \"help\" - Gives this menu.");    //help
+        System.out.println("Available test cases:");
+        System.out.println("distsys.promigr.test.GrepProcess <queryString> <inputFile> <outputFile>");
+        System.out.println("distsys.promigr.test.MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
+        System.out.println("distsys.promigr.test.WebPageCopier <website> <outputFile>");
    
         while(true) {          
             String command = "";
