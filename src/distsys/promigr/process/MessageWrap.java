@@ -17,7 +17,7 @@ public class MessageWrap implements Serializable
     private MigratableProcess process;    
     private String procId;
     private Map<String, Boolean> procStatus;
-    private boolean ack;
+    private boolean ack;        //TODO remove this
     
     public int getCommand() {
         return this.command;

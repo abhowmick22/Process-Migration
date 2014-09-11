@@ -70,6 +70,14 @@ TODO:\
 \
 ----15. decrease polling time even more than 2.5s  --> NO NEED - Tell abhishek about what has been done before migrating a process\
 \
+16. remove the stupid T thing from ProcessManager \
+\
+17. clean up the build file, remove run etc\
+\
+18 change server port constants and 50000 thing\
+\
+19 while migrating, there is no ack. Hence, we assume that if a process stopped running on A, then our pmTable was updated before we sent the migrate command\
+\
 Executable instructions:\
 ant clean compile jar\
 java -cp ./build/jar/ProMigrate.jar distsys.promigr.manager.LocalManager\
@@ -96,7 +104,7 @@ TODOs:\
 	\
 \
 create ghc55.ghc.andrew.cmu.edu distsys.promigr.manager.GrepProcess query /afs/andrew.cmu.edu/usr11/ndhruva/public/a.txt /afs/andrew.cmu.edu/usr11/ndhruva/public/b.txt\
-create ghc54.ghc.andrew.cmu.edu distsys.promigr.test.GrepProcess asasd ./run/a.txt ./run/b.txt\
+create ghc51.ghc.andrew.cmu.edu distsys.promigr.test.GrepProcess asasd ./run/a.txt ./run/b.txt\
 create ghc52.ghc.andrew.cmu.edu distsys.promigr.manager.WebPageCopier http://www.oracle.com /afs/andrew.cmu.edu/usr11/ndhruva/public/e.txt\
 create ghc53.ghc.andrew.cmu.edu distsys.promigr.test.WebPageCopier http://www.oracle.com ./run/x.txt\
 \
