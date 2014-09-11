@@ -1,18 +1,12 @@
 package distsys.promigr.manager;
 
-import java.lang.reflect.*;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +22,13 @@ public class LocalManagerThread implements Runnable
     private Socket clientSocket;
     private int serverPort;
     
-    protected LocalManagerThread(Socket clientSocket, ConcurrentMap<String, ThreadObject> threadMap, int serverPort) {
+    /*
+     * Constructor which takes in the socket connection to master, map of 
+     * thread running on system and port number on which to communicate with TODO
+     */
+    protected LocalManagerThread(Socket clientSocket, 
+    			ConcurrentMap<String, ThreadObject> threadMap, int serverPort)
+    {
         this.clientSocket = clientSocket;
         this.threadMap = threadMap;
         this.serverPort = serverPort;
@@ -39,20 +39,20 @@ public class LocalManagerThread implements Runnable
     {
     	ObjectInputStream in = null;
     	InputStream inputStream = null;
-    	ObjectInputStream ackIn = null;
     	MessageWrap message = null;
-    	String procId, dest = "", returnAddr = "";
+    	String procId, dest = "";
     	int msg = -1;
-    	boolean ackTrue = false;
     	
-		try {
+    	/*
+    	 * Reads the message from master which contains instruction and identifies
+    	 * type of request.
+    	 */
+    	try {
 			inputStream = clientSocket.getInputStream();
 			in = new ObjectInputStream(inputStream);
-			//System.out.println(in.readLine());
-			
 			message = (MessageWrap) in.readObject();
 			msg = message.getCommand();
-			//System.out.println(msg);
+
 		} catch (IOException e1) {
 			try {
 			    inputStream.close();
@@ -66,27 +66,29 @@ public class LocalManagerThread implements Runnable
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
+    	
+    	/*
+    	 * Take action according to the type of command received
+    	 */
         switch (msg){        
-            case 0 : {						// Migrate process
+        
+        	/*
+        	 * Migrates the indicated process to indicated node
+        	 */
+            case 0 : {						
             	try {
     				procId = message.getProcId();
     				dest = message.getDest();
-    				returnAddr = message.getSourceAddr();
-    				//System.out.println(returnAddr);
-    				//System.out.println("avl keys" + threadMap.keySet());
     				MigratableProcess process = this.threadMap.get(procId).getProcess();
-    				if(!(this.threadMap.get(procId).getThread().isAlive())) {
-    				    //the thread is no longer active. hence the process terminated
-    				    //TODO: ack? or just mention in report that there should be an ack but there isn't.
-    				    //      hence user has to reply on ps to check if the process migrated
-    				    //      also, we assume that polling is quick enough to assume that it has updated status of finished process
-    				    return;
+    				if(!(this.threadMap.get(procId).getThread().isAlive())) 
+    				{
+    				    return;		// do not do anything if the thread is dead
     				}
     				
-    				Socket clientSocket = new Socket(dest, this.serverPort);
-    				
+    				Socket clientSocket = new Socket(dest, this.serverPort);	
     				process.suspend();
+    				
+    				// Wrap the serialized process in a message
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
     				echoMsg.setProcId(procId);
@@ -94,42 +96,19 @@ public class LocalManagerThread implements Runnable
     				echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
     				
     				//wait for the process to finish before serializing
-    				this.threadMap.get(procId).getThread().join(1000);  //assume the thread joins within this time
+    				//assume the thread joins within this time
+    				this.threadMap.get(procId).getThread().join(1000);  
     				
+    				// Write the serialized object
     			    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-    			    //System.out.println("migrated "+procId);
-    			    //Thread.sleep(1000);  //TODO: remove this - think of something better to delay
+
     			    outStream.writeObject(echoMsg);
     			    outStream.flush();
     		        outStream.close();
     		        clientSocket.close();
-    		        
-    		        // Wait for ack message
-    		        //ServerSocket socket = new ServerSocket(this.serverPort + 1);
-    		        //Socket ackSocket = socket.accept();
-    				//ackIn = new ObjectInputStream(ackSocket.getInputStream());
-    				
-    				
-						//MessageWrap ackMessage = (MessageWrap) ackIn.readObject();
-						//System.out.println("ack message : " + ackMessage);
-//						ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
-//						ackIn.close();
-//						ackSocket.close();
-//						socket.close();
-//						ackTrue = ackMessage.getAck();
-//						System.out.println("ack received is " + ackTrue);
-//						Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
-//						ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
-//						returnOutStream.writeObject(ackMessage);
-//						returnOutStream.close();
-//						returnSocket.close();
 
-    				// if we receive  positive ack, then update the thread map
-    			//if(ackTrue){
+    		        // update the thread map with the new location of migrated process
     				threadMap.remove(procId);
-    				//System.out.println("removing keys" + threadMap.keySet());
-    				//System.out.println(threadMap);
-    			//}
     				
     			} catch (IOException e) {
     				//System.out.println("Cannot connect to "+ dest+". Please try again after making sure it is up.");
@@ -141,16 +120,17 @@ public class LocalManagerThread implements Runnable
                 } 
             	break;
             }
-            case 1 : {						// Create process
+            
+            /*
+             * Launch a new process, as indicated by master on this node
+             */
+            case 1 : {						
             	
             	MigratableProcess recdProcess;
-            	Class<?> myClass;
-            	String className;
-     
-            	 try {
+            	try {
+            		
     				procId = message.getProcId();
-    				returnAddr = message.getSourceAddr();
-            		recdProcess = (MigratableProcess) message.getProcess();
+    				recdProcess = (MigratableProcess) message.getProcess();
     				ThreadObject threadObject = new ThreadObject();
     				threadObject.setProcess(recdProcess);
     				Thread processThread = new Thread(recdProcess);				
@@ -158,24 +138,10 @@ public class LocalManagerThread implements Runnable
     				
     				processThread.start();
     				
-//    				ackTrue = processThread.isAlive();
-//    				MessageWrap ackMessage = new MessageWrap();
-//					ackMessage.setSourceAddr(InetAddress.getLocalHost().getHostName());
-//					ackMessage.setCommand(4);
-//					ackMessage.setAck(ackTrue);
-	
-//					Socket returnSocket = new Socket(returnAddr, this.serverPort + 1);
-//					ObjectOutputStream returnOutStream = new ObjectOutputStream(returnSocket.getOutputStream());
-//					returnOutStream.writeObject(ackMessage);
-//					returnOutStream.close();
-//					returnSocket.close();
-
-					// if successfully created process, then update the thread map
-					//if(ackTrue){
+    				// update the thread map if successfully launched process
     				threadMap.put(procId, threadObject);
-    				//System.out.println("added keys " + threadMap.keySet());
-					//}
-					
+
+    				// wait for launched process
 					processThread.join();
     				
     			} catch (InterruptedException e) {
@@ -184,8 +150,17 @@ public class LocalManagerThread implements Runnable
                 }   	
             	break;
             }
-            case 2 :						// Return active list in response to a ps command
+            
+            /*
+             * Returns the list of active processes to ProcessManagerAssistant,
+             * in order to service the user command 'ps'
+             */
+            case 2 :
+            	
+            	// address of master to which active list should be sent
             	dest = message.getSourceAddr();
+            	
+            	// Check status of each thread in the thread map and update if necessary
             	Set<String> processIds = threadMap.keySet();
             	Map<String, Boolean> procStatus = new HashMap<String, Boolean>();
             	String s;
@@ -201,6 +176,8 @@ public class LocalManagerThread implements Runnable
             	    }
             	}
             	
+            	// Send updated thread map information through a message 
+            	// back to master, that is listening on port (serverPort+1)
 				try {
 					Socket clientSocket = new Socket(dest, this.serverPort + 1);
 					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
