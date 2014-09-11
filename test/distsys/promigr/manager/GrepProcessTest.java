@@ -14,6 +14,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 
+import distsys.promigr.manager.LocalManager;
+import distsys.promigr.manager.LocalManagerThread;
+import distsys.promigr.manager.ThreadObject;
 import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
 
