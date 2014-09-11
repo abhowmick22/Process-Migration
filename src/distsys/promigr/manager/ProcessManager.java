@@ -136,7 +136,7 @@ public class ProcessManager<T>
                     entry.setProcId(procId);
                     entry.setNodeName(commandList[1]);             
                     entry.setStatus(true);
-                    entry.setArguments(Arrays.copyOfRange(commandList, 3, commandList.length - 1));     
+                    entry.setArguments(Arrays.copyOfRange(commandList, 3, commandList.length));     
                     manager.pmTable.put(procId, entry);
                     
                     System.out.println("Please refer to this process as: " + procId);
