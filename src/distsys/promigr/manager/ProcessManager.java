@@ -102,6 +102,7 @@ public class ProcessManager<T>
                     ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
                     
                     outStream.writeObject(echoMsg);
+                    outStream.flush();
                     outStream.close();
                     clientSocket.close();
                     
@@ -194,6 +195,7 @@ public class ProcessManager<T>
                     ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
                     
                     outStream.writeObject(echoMsg);
+                    outStream.flush();
                     outStream.close();
                     clientSocket.close();
                     
@@ -255,6 +257,7 @@ public class ProcessManager<T>
                         Socket clientSocket = new Socket(machine, 50000);
                         ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
                         outStream.writeObject(echoMsg);
+                        outStream.flush();
                         outStream.close();
                         clientSocket.close();   
                     }

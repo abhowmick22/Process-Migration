@@ -100,6 +100,7 @@ public class LocalManagerThread implements Runnable
     			    System.out.println("migrated "+procId);
     			    //Thread.sleep(1000);  //TODO: remove this - think of something better to delay
     			    outStream.writeObject(echoMsg);
+    			    outStream.flush();
     		        outStream.close();
     		        clientSocket.close();
     		        
@@ -207,6 +208,7 @@ public class LocalManagerThread implements Runnable
 					psMsg.setCommand(5);
 					psMsg.setProcStatus(procStatus);
 					outStream.writeObject(psMsg);
+					outStream.flush();
 			        outStream.close();
 			        clientSocket.close();
 				} catch (UnknownHostException e) {

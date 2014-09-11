@@ -23,7 +23,8 @@ public class PollingResponseThread implements Runnable{
 			try {
 				clientSocket = pollingSocket.accept();
 				in = new ObjectInputStream(clientSocket.getInputStream());
-				poll = (String) in.readObject();	
+				poll = (String) in.readObject();
+				in.close();
 				//System.out.println(poll + " from PM");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -28,6 +28,7 @@ public class PollingRequestThread implements Runnable{
 		String currMachine = null;
 		while(true){
 			try {
+			    //poll ever 2.5s
 				Thread.sleep(2500);
 				
 				// start polling
@@ -40,11 +41,11 @@ public class PollingRequestThread implements Runnable{
 						//System.out.println("polling " + localMachine);
 						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 						outStream.writeObject(poll);
+						outStream.flush();
+						outStream.close();
 					}
 				}
 				
-				
-
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				// update machineAliveMap
