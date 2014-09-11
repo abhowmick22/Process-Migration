@@ -30,37 +30,33 @@ public class ProcessManager
         manager.procCount = 0;
         manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
         manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
-        //TODO: create new thread to poll the machines that will be running processes later
-    	
+        
     	PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, manager.pmTable, 50002);
     	Thread polling = new Thread(prThread);
       	polling.start();
     	
         System.out.println("-----Welcome-----");
         System.out.println("-----Following are the commands that are available to you-----");
-        System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the machine node-name");    //TODO: new process command
-        System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
-        System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
-        System.out.println("4. Help: \"help\" - Gives this menu.");    //help
+        System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the machine node-name");  
+        System.out.println("2. Migrate process: \"migrate process-id destination-node\" - migrates process-id to destination-node. The process ID will be generated and given to you.");    
+        System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    
+        System.out.println("4. Help: \"help\" - Gives this menu.");    
         System.out.println("5. Exit: \"exit\" - Exits Process Manager, does not close Local Managers.");
-        System.out.println("Available test cases for the \"create\" command:");
+        System.out.println("Available test cases for the \"create\" command (don't forget node name):");
         System.out.println("distsys.promigr.test.GrepProcess <queryString> <inputFile> <outputFile>");
         System.out.println("distsys.promigr.test.MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
         System.out.println("distsys.promigr.test.WebPageCopier <website> <outputFile>");
    
         while(true) {          
+            System.out.print(">");            
             String command = "";
-            
-            System.out.print(">");
-            System.out.flush();
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));            
             try {
                 command = br.readLine();
             }
             catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.out.println("Input error.");
+                continue;
             }
             
             if(command.length()==0) {
@@ -69,14 +65,14 @@ public class ProcessManager
             
             String[] commandList = command.split(" ");
             
-            if(commandList[0].equals("create")) {
+            if(commandList[0].equals("create")) {   //CREATE
                 if(commandList.length < 3) {
                     System.out.println("Please refer \"help\" for correct command options.");
                     continue;
                 }
                 //create a new process
                 String processName = commandList[2];
-                String procId = "proc" + manager.procCount;    //TODO: change this
+                String procId = "proc" + manager.procCount;    
                 MigratableProcess inst = manager.init(commandList);
                 if(inst == null) {
                     System.out.println("Could not create process. May not be implementing MigratableProcess");
@@ -85,13 +81,13 @@ public class ProcessManager
                 
                 try {
                     Socket clientSocket = new Socket(commandList[1], 50000);
+                    //wrap the object with procId and metadata
                     MessageWrap echoMsg = new MessageWrap();
                     echoMsg.setCommand(1);
                     echoMsg.setProcId(procId);
                     echoMsg.setMigratableProcess(inst);
-                    
+                    //write the wrap to socket
                     ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                    
                     outStream.writeObject(echoMsg);
                     outStream.flush();
                     outStream.close();
@@ -116,6 +112,8 @@ public class ProcessManager
 //                    //got acknowledgement of process creation; need to update tables
 //                    System.out.println("Process successfully created.");
                     
+                    //update active machines table, and the process manager table to keep
+                    //track of this newly created process
                     manager.machineAliveMap.put(commandList[1], true);
                     TableEntry entry = new TableEntry();
                     entry.setProcessName(processName);
@@ -129,23 +127,17 @@ public class ProcessManager
                     manager.procCount++;
                 }
                 catch (IOException e) {
-                    System.out.println("Can't create process because can't connect to host:" + commandList[1]);                    
+                    System.out.println("Can't create process because can't connect to host: " + commandList[1]);                    
                 }
-                // TODO : Add functionality of user input for port
                 
-                
-            } else if(commandList[0].equals("migrate")) {
+            } else if(commandList[0].equals("migrate")) {   //MIGRATE
                 if(commandList.length != 3) {
                     System.out.println("Please refer \"help\" for correct command options.");
                     continue;
                 }
-                //create a new process
+                
                 String procId = commandList[1];
                 String dest = commandList[2];
-                //String procId = "proc" + manager.procCount;    //TODO: change this
-                // MigratableProcess inst = manager.init(commandList);
-                // access MigratableProcess inst from table with procId
-                //System.out.println(procId);
                 if(!manager.machineAliveMap.containsKey(dest)) {
                     System.out.println("The destination doesn't seem to be on our records. Make sure to check process migration through \"ps\""); 
                 }
@@ -156,9 +148,6 @@ public class ProcessManager
                 }
                 String curr = manager.pmTable.get(procId).getNodeName();
                 if(!manager.machineAliveMap.get(curr)) {
-                    //node not functioning
-                    //this should not happen because polling made sure that the process status was marked false
-                    //TODO: do the above; or just mark the node not running and then this if should come into picture
                     System.out.println("The source node of the process is no longer functioning");
                     continue;
                 }
@@ -185,10 +174,8 @@ public class ProcessManager
                     MessageWrap echoMsg = new MessageWrap();
                     echoMsg.setCommand(0);
                     echoMsg.setProcId(procId);
-                    echoMsg.setDest(commandList[2]);
-                    
-                    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                    
+                    echoMsg.setDest(commandList[2]);                    
+                    ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());                    
                     outStream.writeObject(echoMsg);
                     outStream.flush();
                     outStream.close();
@@ -211,7 +198,7 @@ public class ProcessManager
 //                    
 //                    //got acknowledgement of migration; now update tables
 //                    System.out.println("Process successfully migrated.");
-                    
+                    //update the active process and machine lists
                     manager.machineAliveMap.put(commandList[2], true);
                     manager.pmTable.get(procId).setNodeName(commandList[2]); 
                 }
@@ -221,13 +208,13 @@ public class ProcessManager
                 catch (IOException e) {
                     System.out.println("Can't migrate process. Socket connection problem.");
                 }
-                // TODO : Add functionality of user input for port
                                                                
             } else if(commandList[0].equals("ps")) {
                 
                 System.out.println("Gathering information from all active hosts. Please wait...");
                 
-                //create the command to be sent to every machine
+                //create the command to be sent to every machine asking for process information
+                //on each machine
                 MessageWrap echoMsg = new MessageWrap();
                 echoMsg.setCommand(2);
                 try {
@@ -253,8 +240,8 @@ public class ProcessManager
                         clientSocket.close();   
                     }
                     catch (UnknownHostException e) {
-                        //shouldn't occur
-                        System.out.println("IP of "+ machine+" can't be determined.");                            
+                        System.out.println("IP of "+ machine+" can't be determined.");    
+                        continue;   //continue with other nodes
                     }
                     catch (IOException e) {
                         //machine dead most likely or lost connectivity before polling could
@@ -266,7 +253,8 @@ public class ProcessManager
                                 manager.pmTable.get(procId).setStatus(false);
                             }
                         }
-                    }                                                                                 
+                        continue;   //continue with other nodes
+                    }                        
                 }
                 
                 //wait till all requests have been responded to.             
@@ -274,8 +262,7 @@ public class ProcessManager
                     pmaThread.join(10000);
                 }
                 catch (InterruptedException e) {
-                    System.out.println("Thread interrupted or timed out. Providing the cached process list below.");
-                    //TODO: need anything else to be done?
+                    System.out.println("Thread interrupted or timed out. Providing the latest cached process list below.");
                 }
                 
                 //pmTable updated; now print the details of all processes
@@ -294,10 +281,10 @@ public class ProcessManager
                 }                                
             } else if(commandList[0].equals("help")) {
                 System.out.println("-----Following are the commands that are available to you-----");
-                System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the node-name");    //TODO: new process command
-                System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
-                System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
-                System.out.println("4. Help: \"help\" - Gives this menu.");    //help
+                System.out.println("1. Create process: \"create node-name process-name argument-list...\" - creates the process on the node-name");    
+                System.out.println("2. Migrate process: \"migrate process-id destination-node\" - migrates process-id to destination-node. The process ID will be generated and given to you.");
+                System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");  
+                System.out.println("4. Help: \"help\" - Gives this menu.");  
                 System.out.println("5. Exit: \"exit\" - Exits Process Manager, does not close Local Managers."); 
                 
             } else if(commandList[0].equals("exit")) {
@@ -310,10 +297,16 @@ public class ProcessManager
         }
     }
     
+    /**
+     * Creates an object for the class that the user provides, which acts as the user process.
+     * @param args The command list containing the entire command with list of arguments for the new process.
+     * @return Instance of the new process (object of user defined class).
+     */
     public MigratableProcess init(String[] args) {
         
         Class<?> clazz;
         try {
+            //determine the class
             clazz = Class.forName(args[2]);
         }
         catch (ClassNotFoundException e) {
@@ -321,13 +314,12 @@ public class ProcessManager
             return null;
         }
         
-        //Class<?>[] classArray = new Class[args.length-3];
         Class<?>[] classArray = new Class[] {String[].class};
         String[] argsArray = new String[args.length - 3];
-        argsArray = Arrays.copyOfRange(args, 3, args.length);
-        
+        argsArray = Arrays.copyOfRange(args, 3, args.length);        
         Constructor<?> constructor;
         try {
+            //invoke constructor
             constructor = clazz.getConstructor(classArray);
         }
         catch (SecurityException e) {
@@ -340,6 +332,7 @@ public class ProcessManager
         }
         MigratableProcess inst = null;
         try {
+            //instantiate user class
             inst = (MigratableProcess) constructor.newInstance((Object) argsArray);
         }
         catch (IllegalArgumentException e) {            

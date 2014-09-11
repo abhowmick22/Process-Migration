@@ -18,6 +18,9 @@ public class PollingResponseThread implements Runnable{
 		this.pollingSocket= pollingSocket;
 	}
 
+	/**
+     * The run method executes for this class.
+     */
 	@Override
 	public void run() {
 		ObjectInputStream in = null;		

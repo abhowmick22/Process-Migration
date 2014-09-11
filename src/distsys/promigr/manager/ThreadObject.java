@@ -7,6 +7,7 @@ public class ThreadObject
     public Thread thread;
     public MigratableProcess process;
     
+    
     public Thread getThread() {
         return this.thread;
     }
