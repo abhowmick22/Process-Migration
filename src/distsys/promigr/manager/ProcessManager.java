@@ -3,35 +3,21 @@ package distsys.promigr.manager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-//import org.apache.commons.lang.ArrayUtils;
-
-
-
-
-
-
-
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
 
-public class ProcessManager<T>
+public class ProcessManager
 {
 
 	private int procCount;
@@ -40,7 +26,7 @@ public class ProcessManager<T>
 	
     public static void main(String[] args) {
         
-    	ProcessManager<MigratableProcess> manager = new ProcessManager<MigratableProcess>();
+    	ProcessManager manager = new ProcessManager();
         manager.procCount = 0;
         manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
         manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
@@ -324,8 +310,7 @@ public class ProcessManager<T>
         }
     }
     
-    //TODO: remove T and make it MigratableProcess
-    public T init(String[] args) {
+    public MigratableProcess init(String[] args) {
         
         Class<?> clazz;
         try {
@@ -339,13 +324,8 @@ public class ProcessManager<T>
         //Class<?>[] classArray = new Class[args.length-3];
         Class<?>[] classArray = new Class[] {String[].class};
         String[] argsArray = new String[args.length - 3];
-        //argsArray = Arrays.copyOfRange(args, 3, args.length - 1);
-        //create node distsys.promigr.manager.GrepProcess query a b
-        //TODO: arraycopy
-        for(int i=3;i<args.length;i++) {
-            //classArray[i-3] = String.class;
-            argsArray[i-3] = args[i];
-        }
+        argsArray = Arrays.copyOfRange(args, 3, args.length);
+        
         Constructor<?> constructor;
         try {
             constructor = clazz.getConstructor(classArray);
@@ -358,12 +338,11 @@ public class ProcessManager<T>
             System.out.println("No such constructor found.");
             return null;
         }
-        T inst = null;
+        MigratableProcess inst = null;
         try {
-            inst = (T) constructor.newInstance((Object) argsArray);
+            inst = (MigratableProcess) constructor.newInstance((Object) argsArray);
         }
-        catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        catch (IllegalArgumentException e) {            
             System.out.println("Illegal args.");
             return null;
         }

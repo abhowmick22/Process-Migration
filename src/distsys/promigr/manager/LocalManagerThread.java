@@ -22,7 +22,7 @@ public class LocalManagerThread implements Runnable
     private Socket clientSocket;
     private int serverPort;
     
-    /*
+    /**
      * Constructor which takes in the socket connection to master, map of 
      * thread running on system and port number on which to communicate with TODO
      */
@@ -34,6 +34,9 @@ public class LocalManagerThread implements Runnable
         this.serverPort = serverPort;
     }
 
+    /**
+     * The run method executes the code for this class.
+     */
     @Override
     public void run()
     {
@@ -59,23 +62,16 @@ public class LocalManagerThread implements Runnable
 			    clientSocket.close();
             }
             catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                //ignore
             }
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//ignore
 		}
     	
-    	/*
-    	 * Take action according to the type of command received
-    	 */
-        switch (msg){        
-        
-        	/*
-        	 * Migrates the indicated process to indicated node
-        	 */
-            case 0 : {						
+    	//Take action according to the type of command received
+        switch (msg){                
+        	 
+            case 0 : {	//MIGRATE: Migrates the indicated process to indicated node	
             	try {
     				procId = message.getProcId();
     				dest = message.getDest();
@@ -111,20 +107,15 @@ public class LocalManagerThread implements Runnable
     				threadMap.remove(procId);
     				
     			} catch (IOException e) {
-    				//System.out.println("Cannot connect to "+ dest+". Please try again after making sure it is up.");
-    			    //TODO: do nothing; could have acked back saying node not found
+    				//ignore
     			}
                 catch (InterruptedException e) {
                     //do nothing
-                    //TODO: anything?
                 } 
             	break;
             }
             
-            /*
-             * Launch a new process, as indicated by master on this node
-             */
-            case 1 : {						
+            case 1 : { //CREATE: Launch a new process, as indicated by master on this node						
             	
             	MigratableProcess recdProcess;
             	try {
@@ -145,8 +136,7 @@ public class LocalManagerThread implements Runnable
 					processThread.join();
     				
     			} catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    // ignore
                 }   	
             	break;
             }
@@ -155,7 +145,7 @@ public class LocalManagerThread implements Runnable
              * Returns the list of active processes to ProcessManagerAssistant,
              * in order to service the user command 'ps'
              */
-            case 2 :
+            case 2 : {
             	
             	// address of master to which active list should be sent
             	dest = message.getSourceAddr();
@@ -189,17 +179,15 @@ public class LocalManagerThread implements Runnable
 			        outStream.close();
 			        clientSocket.close();
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// ignore
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//ignore
 				}       	
             	
             	break;
-            
+            }
             default : {
-                
+                //should not occur
             }
         }
         

@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentMap;
 
 public class LocalManager
 {
-	
 	public static ConcurrentMap<String, ThreadObject> threadMap;
 	private final static int serverPort = 50000;
 	
@@ -19,7 +18,7 @@ public class LocalManager
         ServerSocket pollingSocket = null;
         ServerSocket serverSocket = null;
         
-        /**
+        /*
          * New server socket to listen for polling requests from master in a new
          * thread.
          */
@@ -29,39 +28,31 @@ public class LocalManager
 	        Thread polling = new Thread(prThread);
 	        polling.start();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			// can't do much on the local manager's side
+			// ignore
 		}
 
-		/**
-		 * Server socket to listen for instruction messages from the master.
-		 */
-        try {
+		// Server socket to listen for instruction messages from the master.
+		try {
             serverSocket = new ServerSocket(serverPort);
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            //System.out.println("Can't create local server.");
+            // can't do much on the local manager's side
+            // ignore
         }          
         
         while(true) {
-        	
-        	/**
-        	 * Listen for new requests
-        	 */
+        	//Listen for new requests from process manager
             Socket clientSocket = null;
             try {
                 clientSocket = serverSocket.accept();
             }
             catch (IOException e) {
-                // TODO Auto-generated catch block
-                //System.out.println("Can't accept connections.");
+                //ignore
             }
             
-            /**
-             * Start a new thread to process to process each instruction 
-             * from the master
-             */
+            //Start a new thread to process to process each instruction 
+            //from the master
             if(clientSocket != null) {
                 LocalManagerThread lmthread = new LocalManagerThread(clientSocket,
                 												threadMap, serverPort);

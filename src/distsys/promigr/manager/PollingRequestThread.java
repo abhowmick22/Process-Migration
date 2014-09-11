@@ -3,42 +3,45 @@ package distsys.promigr.manager;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-public class PollingRequestThread implements Runnable{
+public class PollingRequestThread implements Runnable
+{
 
 	private Socket clientSocket = null;
 	private ConcurrentMap<String, Boolean> machineAliveMap;
 	private ConcurrentMap<String, TableEntry> pmTable;
 	private int serverPort;
 	
+	/**
+	 * Constructor that initializes the local machine alive map, server port number and process manager table.
+	 * @param machineAliveMap The map of process ID and active machines.
+	 * @param pmTable The Map of process ID and metadata like node name, process name etc.
+	 * @param serverPort Server's port number.
+	 */
 	public PollingRequestThread(ConcurrentMap<String, Boolean> machineAliveMap, 
-								ConcurrentMap<String, TableEntry> pmTable, int serverPort) {
-		// TODO Auto-generated constructor stub
+								ConcurrentMap<String, TableEntry> pmTable, 
+								int serverPort) {
 		this.machineAliveMap = machineAliveMap;
 		this.serverPort = serverPort;
 		this.pmTable = pmTable;
 	}
 
+	/**
+	 * The run method executes for this class.
+	 */
 	@Override
 	public void run() {
 		String poll = "ping";
 		String currMachine = null;
 		while(true){
 			try {
-			    //poll ever 2.5s
+			    //poll every 2.5s
 				Thread.sleep(2500);
-				
-				// start polling
-				//System.out.println("polling loop");
-				
 				for(String localMachine : machineAliveMap.keySet()) {
 					currMachine = localMachine;
 					if(machineAliveMap.get(localMachine)){
-						clientSocket = new Socket(localMachine, serverPort);
-						//System.out.println("polling " + localMachine);
+						clientSocket = new Socket(localMachine, serverPort);						
 						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 						outStream.writeObject(poll);
 						outStream.flush();
@@ -47,7 +50,6 @@ public class PollingRequestThread implements Runnable{
 				}
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				// update machineAliveMap
 				machineAliveMap.put(currMachine, false);
 				for(String procId : pmTable.keySet()) {
@@ -56,11 +58,9 @@ public class PollingRequestThread implements Runnable{
                     }
                 }
 				System.out.println(currMachine + " is down. Oh no.");
-				System.out.println(">");
-				//e.printStackTrace();
+				System.out.print(">");
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//ignore because this thread won't be interrupted
 			}
 		}
 		
