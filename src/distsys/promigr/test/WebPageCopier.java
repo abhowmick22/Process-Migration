@@ -65,12 +65,10 @@ public class WebPageCopier implements MigratableProcess {
             }          
         }
         catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // ignore
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // ignore
         }
         
         suspending = false;

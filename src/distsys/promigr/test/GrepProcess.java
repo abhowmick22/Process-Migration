@@ -26,6 +26,7 @@ public class GrepProcess implements MigratableProcess
 		if (args.length != 3) {
 			System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
 			throw new Exception("Invalid Arguments");
+			//TODO handle this in local manager thread
 		}
 		
 		query = args[0];

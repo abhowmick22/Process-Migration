@@ -189,9 +189,6 @@ public class LocalManagerThread implements Runnable
             default : {
                 //should not occur
             }
-        }
-        
-        
-        
+        }        
     }
 }
