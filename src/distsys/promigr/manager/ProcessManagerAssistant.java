@@ -45,7 +45,7 @@ public class ProcessManagerAssistant implements Runnable
             	if(!this.machineAliveMap.get(machineName)) {
             		continue;
             	}
-            	serverSocket.setSoTimeout(10000);			//timeout for all connections being closed                
+            	serverSocket.setSoTimeout(4000);			//timeout for all connections being closed                
             	Socket clientSocket = serverSocket.accept();
                 InputStream inputStream = clientSocket.getInputStream();
                 ObjectInputStream objectStream = new ObjectInputStream(inputStream);                
@@ -69,7 +69,7 @@ public class ProcessManagerAssistant implements Runnable
                 //TODO: communicate this to ProcessManager
             } catch (IOException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Cannot service ps command. Connection timed out.");
+				System.out.println("Connection timed out. All hosts may be down or connection problem.");
 			}
                                    
         }

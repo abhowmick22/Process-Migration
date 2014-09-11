@@ -56,7 +56,8 @@ public class ProcessManager<T>
         System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
         System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
         System.out.println("4. Help: \"help\" - Gives this menu.");    //help
-        System.out.println("Available test cases:");
+        System.out.println("5. Exit: \"exit\" - Exits Process Manager, does not close Local Managers.");
+        System.out.println("Available test cases for the \"create\" command:");
         System.out.println("distsys.promigr.test.GrepProcess <queryString> <inputFile> <outputFile>");
         System.out.println("distsys.promigr.test.MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
         System.out.println("distsys.promigr.test.WebPageCopier <website> <outputFile>");
@@ -83,6 +84,10 @@ public class ProcessManager<T>
             String[] commandList = command.split(" ");
             
             if(commandList[0].equals("create")) {
+                if(commandList.length < 3) {
+                    System.out.println("Please refer \"help\" for correct command options.");
+                    continue;
+                }
                 //create a new process
                 String processName = commandList[2];
                 String procId = "proc" + manager.procCount;    //TODO: change this
@@ -138,12 +143,16 @@ public class ProcessManager<T>
                     manager.procCount++;
                 }
                 catch (IOException e) {
-                    System.out.println("Can't create process because can't connect to host.");                    
+                    System.out.println("Can't create process because can't connect to host:" + commandList[1]);                    
                 }
                 // TODO : Add functionality of user input for port
                 
                 
             } else if(commandList[0].equals("migrate")) {
+                if(commandList.length != 3) {
+                    System.out.println("Please refer \"help\" for correct command options.");
+                    continue;
+                }
                 //create a new process
                 String procId = commandList[1];
                 String dest = commandList[2];
@@ -229,16 +238,11 @@ public class ProcessManager<T>
                 // TODO : Add functionality of user input for port
                                                                
             } else if(commandList[0].equals("ps")) {
+                
+                System.out.println("Gathering information from all active hosts. Please wait...");
+                
                 //create the command to be sent to every machine
                 MessageWrap echoMsg = new MessageWrap();
-                //get total number of alive machines
-                int aliveCount = 0;                
-                for(Boolean isAlive : manager.machineAliveMap.values()) {
-                    if(isAlive) {
-                        aliveCount++;
-                    }
-                }
-                
                 echoMsg.setCommand(2);
                 try {
                     echoMsg.setSourceAddr(InetAddress.getLocalHost().getHostName());
@@ -247,6 +251,7 @@ public class ProcessManager<T>
                     System.out.println("Cannot get local host information.");
                     continue;
                 }
+                
                 //new Thread to process the reply from every machine
                 ProcessManagerAssistant pmAssistant = new ProcessManagerAssistant(manager.pmTable, manager.machineAliveMap);
                 Thread pmaThread = new Thread(pmAssistant);
@@ -278,12 +283,12 @@ public class ProcessManager<T>
                     }                                                                                 
                 }
                 
-                //wait till all requests have been responded to                
+                //wait till all requests have been responded to.             
                 try {
-                    pmaThread.join();
+                    pmaThread.join(10000);
                 }
                 catch (InterruptedException e) {
-                    System.out.println("Thread interrupted.");
+                    System.out.println("Thread interrupted or timed out. Providing the cached process list below.");
                     //TODO: need anything else to be done?
                 }
                 
@@ -307,7 +312,11 @@ public class ProcessManager<T>
                 System.out.println("2. Migrate process: \"migrate process-id destination-node\" - The process ID will be generated and given to you.");    //TODO: migrate process command
                 System.out.println("3. Process list: \"ps\" - Will provide list of processes running on different nodes.");    //TODO: process list
                 System.out.println("4. Help: \"help\" - Gives this menu.");    //help
+                System.out.println("5. Exit: \"exit\" - Exits Process Manager, does not close Local Managers."); 
                 
+            } else if(commandList[0].equals("exit")) {
+                System.out.println("Alright then, goodbye!");
+                return;
             } else {
                 System.out.println("Command not found. Enter \"help\" to get list of commands.");
             }
