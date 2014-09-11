@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
-
 import distsys.promigr.process.MessageWrap;
 import distsys.promigr.process.MigratableProcess;
 

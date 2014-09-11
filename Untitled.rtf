@@ -1,8 +1,6 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1187
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 ArialMT;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue233;}
-{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid2\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1440\lin1440 }{\listname ;}\listid1}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+{\colortbl;\red255\green255\blue255;}
 \margl1440\margr1440\vieww25400\viewh14520\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -34,22 +32,22 @@ procID       processName       arguments         nodeName           status\
 \
 \
 TODO:\
-1. create a ConcurrentHashMap<Machines> of list of machines in PM. Spawn a thread, make it poll the machines and update the map -> implement the response in LocalManagerThread.java with command 3\
-2. command "ps" in ProcManager:\
+---1. create a ConcurrentHashMap<Machines> of list of machines in PM. Spawn a thread, make it poll the machines and update the map -> implement the response in LocalManagerThread.java with command 3\
+2---. command "ps" in ProcManager:\
 	run through the ConcurrentHashMap<Machines> of machines, send a command to the machine (check timeout of socket)\
 		wait for each machine to reply. get list of procId's from each machine\
 	print all the info of each active process to the user\
 \
-3. Implement response to command 3 in local managers:\
+---3. Implement response to command 3 in local managers:\
 	retrieve all procIds from the ConcurrentHashMap<Processes> of processes from LocalManager.java\
 	check for each procId if thread.isAlive()\
 	create array/object with all procId names and send this back to ProcManager's thread\
 \
-4. implement ack in ProcessManager with timeout --> can be implemented through ProcessManagerAssitant\
+---4. implement ack in ProcessManager with timeout --> can be implemented through ProcessManagerAssitant\
 \
-5. Also, when migrating, check if process is alive through thread.isAlive() before migration \
+5. Also, when migrating, check if process is alive through thread.isAlive() before migration. In proc manager, check if status is true. \
 \
-6. implement polling; when a machine does not respond, update the pmTable entries and the machineAliveMap\
+---6. implement polling; when a machine does not respond, update the pmTable entries and the machineAliveMap\
 \
 7. Create executable\
 \
@@ -63,33 +61,21 @@ TODO:\
 \
 12. create test cases\
 \
-\
-TODOs:\
-\pard\tx220\tx720\pardeftab720\li720\fi-720
-\ls1\ilvl0
-\f1 \cf0 {\listtext	1.	}Assignment 1:\
-{\listtext	2.	}should call the run method from ProjectManager in order to invoke instance of the process being invoked.\
-{\listtext	3.	}a class that implements the runnable interface should have the run method within which the code that is to be executed by that thread must lie. such a class can be instantiated by our ProjectManager and then passed to an instance of the Thread class:\'a0\
-\pard\tx940\tx1440\pardeftab720\li1440\fi-1440
-\ls1\ilvl1\cf0 {\listtext	1.	}Example: first code on\'a0{\field{\*\fldinst{HYPERLINK "http://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html"}}{\fldrslt \cf2 \ul \ulc2 http://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html}}\
-\pard\tx220\tx720\pardeftab720\li720\fi-720
-\ls1\ilvl0\cf0 {\listtext	4.	}Thread class itself implements Runnable. Hence, one can extend Thread and overwrite the run method. However, implementing Runnable is preferred so you can extend some other class you want.\
-{\listtext	5.	}interrupt only works if the interrupted thread has some mechanism to check the interrupt status flag --> hence, interrupt is like a signal that waits till it encounters either a this.isInterrupted method or a catch clause with the InterruptedException in the thread being interrupted.\
-{\listtext	6.	}make IO methods synchronized.\
+13 create report - 
+\f1 system design diagram in report. also answer all questions in the handout. also give instructions on how to run the code. MAVEN. comment code and documentation\
 \pard\pardeftab720
-\cf0 Read networking (tue and thur lectures)\
+\cf0 cache file object.\
 \
+14. make sure you are printing the headlines and the content of "ps" in the same order.\
 \
 TODOs:\
-filename for grep process\
-make it be able to launch anywhere it wants, using "create"\
-polling vs heartbeat\
-synchronize socket communication\'a0\
-what if user runs a script; multiple requests to flood the buffer\
-don't remove a dead machine from the list\
-create the table entry for the new process only after it has successfully started running - so all file i/o and network connection exceptions are avoided\
-system design diagram in report. also answer all questions in the handout. also give instructions on how to run the code. MAVEN. comment code and documentation\
-cache file object.\
+---filename for grep process\
+---make it be able to launch anywhere it wants, using "create"\
+---polling vs heartbeat\
+---synchronize socket communication\'a0\
+---what if user runs a script; multiple requests to flood the buffer\
+---don't remove a dead machine from the list\
+---create the table entry for the new process only after it has successfully started running - so all file i/o and network connection exceptions are avoided\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0 \cf0 \
