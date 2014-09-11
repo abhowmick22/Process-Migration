@@ -131,11 +131,9 @@ public class ProcessManager<T>
                     
                     System.out.println("Please refer to this process as: " + procId);
                 }
-                catch (UnknownHostException e) {
-                    System.out.println("Can't create process. Unknown host.");                    
-                }
                 catch (IOException e) {
-                    System.out.println("Can't create process. Some IO problem.");
+                    System.out.println("Can't create process because can't connect to host.");
+                    manager.procCount--;
                 }
                 // TODO : Add functionality of user input for port
                 
