@@ -143,10 +143,14 @@ public class ProcessManager<T>
             } else if(commandList[0].equals("migrate")) {
                 //create a new process
                 String procId = commandList[1];
+                String dest = commandList[2];
                 //String procId = "proc" + manager.procCount;    //TODO: change this
                 // MigratableProcess inst = manager.init(commandList);
                 // access MigratableProcess inst from table with procId
                 //System.out.println(procId);
+                if(!manager.machineAliveMap.containsKey(dest)) {
+                    System.out.println("The destination doesn't seem to be on our records. Make sure to check process migration through \"ps\""); 
+                }
                 if(!manager.pmTable.get(procId).getStatus()) {
                     //process no longer running
                     System.out.println("This process is no longer running.");

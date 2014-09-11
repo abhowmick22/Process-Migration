@@ -41,7 +41,7 @@ public class LocalManagerThread implements Runnable
     	InputStream inputStream = null;
     	ObjectInputStream ackIn = null;
     	MessageWrap message = null;
-    	String procId, dest, returnAddr;
+    	String procId, dest = "", returnAddr = "";
     	int msg = -1;
     	boolean ackTrue = false;
     	
@@ -85,6 +85,7 @@ public class LocalManagerThread implements Runnable
     				}
     				
     				process.suspend();
+    				
     				Socket clientSocket = new Socket(dest, this.serverPort);
     				MessageWrap echoMsg = new MessageWrap();
     				echoMsg.setCommand(1);
@@ -128,12 +129,12 @@ public class LocalManagerThread implements Runnable
     			//}
     				
     			} catch (IOException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
+    				//System.out.println("Cannot connect to "+ dest+". Please try again after making sure it is up.");
+    			    //TODO: do nothing; could have acked back saying node not found
     			}
                 catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    //do nothing
+                    //TODO: anything?
                 } 
             	break;
             }
