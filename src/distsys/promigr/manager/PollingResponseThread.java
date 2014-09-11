@@ -24,7 +24,7 @@ public class PollingResponseThread implements Runnable{
 				clientSocket = pollingSocket.accept();
 				in = new ObjectInputStream(clientSocket.getInputStream());
 				poll = (String) in.readObject();	
-				System.out.println(poll);
+				//System.out.println(poll + " from PM");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

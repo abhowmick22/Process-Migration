@@ -35,23 +35,23 @@ public class GrepProcess implements MigratableProcess
         }
         
         query = args[0];
-        inFile = new TransactionalFileInputStream(args[1]);
-        outFile = new TransactionalFileOutputStream(args[2], false);
+        //inFile = new TransactionalFileInputStream(args[1]);
+        //outFile = new TransactionalFileOutputStream(args[2], false);
     }
 
     public void run()
     {
-        PrintStream out = new PrintStream(outFile);
-        DataInputStream in = new DataInputStream(inFile);
+        //PrintStream out = new PrintStream(outFile);
+        //DataInputStream in = new DataInputStream(inFile);
 
-        try {
+        //try {
             while (!suspending) {
-                String line = in.readLine();
-
+                //String line = in.readLine();
+            	String line = "abc";
                 if (line == null) break;
                 
                 //ND: if (line.contains(query)) {
-                    out.println(line);
+                    //out.println(line);
                     System.out.println(line);   //ND
                 //ND: }
                 
@@ -62,11 +62,12 @@ public class GrepProcess implements MigratableProcess
                     // ignore it
                 }
             }
-        } catch (EOFException e) {
-            //End of File
-        } catch (IOException e) {
-            System.out.println ("GrepProcess: Error: " + e);
-        }
+        //} 
+//        catch (EOFException e) {
+//            //End of File
+//        } catch (IOException e) {
+//            System.out.println ("GrepProcess: Error: " + e);
+//        }
 
 
         suspending = false;
