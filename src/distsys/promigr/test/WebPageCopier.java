@@ -18,6 +18,11 @@ public class WebPageCopier implements MigratableProcess {
     private long skip;
     private volatile boolean suspending;
     
+    /**
+     * Constructor that initializes the input url and output file stream.
+     * @param args Array of url and output file.
+     * @throws Exception
+     */
     public WebPageCopier(String args[]) throws Exception
     {
         if (args.length != 2) {
@@ -30,15 +35,18 @@ public class WebPageCopier implements MigratableProcess {
         this.skip = 0;
     }
     
-    @Override
+    /**
+     * The run method provides an execution point.
+     */
     public void run()
     {
         PrintStream out = new PrintStream(outFile);
-        
         try {
             URL url = new URL(this.url);
             while (!suspending) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                //skip on the input stream to the point that we last stopped reading.
+                //need to do this here because we are not migrating url connections.
                 in.skip(this.skip);
                 String line = in.readLine();
                 
@@ -46,7 +54,8 @@ public class WebPageCopier implements MigratableProcess {
                 
                 out.println(line);                
                 this.skip+=line.length()+1;
-                // Make process take longer so that we don't require extremely large files for interesting results
+                
+                // Make process take longer
                 in.close();                
                 try {
                     Thread.sleep(1000);

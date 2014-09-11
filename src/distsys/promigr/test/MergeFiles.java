@@ -1,16 +1,11 @@
 package distsys.promigr.test;
 
-import java.io.File;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.EOFException;
 import java.io.DataInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.Thread;
 import java.lang.InterruptedException;
-import java.util.Map;
 
 import distsys.promigr.io.TransactionalFileInputStream;
 import distsys.promigr.io.TransactionalFileOutputStream;
@@ -19,32 +14,32 @@ import distsys.promigr.process.MigratableProcess;
 
 public class MergeFiles implements MigratableProcess
 {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;  //TODO: keep this?
-	private TransactionalFileInputStream[]  inFile = new 
-    						TransactionalFileInputStream[3];
-    private TransactionalFileOutputStream outFile;
-    
+	private TransactionalFileInputStream[]  inFile; 	        
+    private TransactionalFileOutputStream outFile;    
     private volatile boolean suspending;
 
+    /**
+     * Constructor that initializes the input and output file streams.
+     * @param args Input and output file names.
+     * @throws Exception
+     */
     public MergeFiles(String[] args) throws Exception
     {
         if (args.length != 4) {
             System.out.println("usage: MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
             throw new Exception("Invalid Arguments");
             //TODO: handle this exception in localmanagerthread.java
-        }
-        
-        
+        }        
+        inFile = new TransactionalFileInputStream[3];;
         for(int i=0; i<3; i++){
         	inFile[i] = new TransactionalFileInputStream(args[i]);
         }
         outFile = new TransactionalFileOutputStream(args[3], false);
     }
-
+    
+    /**
+     * The run method provides an execution point.
+     */    
     public void run()
     {
         PrintStream out = new PrintStream(outFile);
@@ -63,29 +58,19 @@ public class MergeFiles implements MigratableProcess
             		if (line == null) break;
             		out.println(line);
             	}
-
-                
-                
-                //ND: if (line.contains(query)) {
-                    //out.println(line);
-                    //System.out.println(line);   //ND
-                //ND: }
-                
-                // Make grep take longer so that we don't require extremely large files for interesting results
+                // Make merging take longer
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     // ignore it
                 }
             }
         } 
         catch (EOFException e) {
-            //End of File
+            //ignore
         } catch (IOException e) {
-            System.out.println ("GrepProcess: Error: " + e);
+            //ignore - assume files are present
         }
-
-
         suspending = false;
     }
 
