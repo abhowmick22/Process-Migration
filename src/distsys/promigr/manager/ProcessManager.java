@@ -316,7 +316,7 @@ public class ProcessManager<T>
                 
             } else if(commandList[0].equals("exit")) {
                 System.out.println("Alright then, goodbye!");
-                return;
+                System.exit(0);
             } else {
                 System.out.println("Command not found. Enter \"help\" to get list of commands.");
             }
