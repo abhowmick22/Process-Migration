@@ -172,6 +172,7 @@ public class ProcessManager
                     //update the active process and machine lists
                     manager.machineAliveMap.put(commandList[2], true);
                     manager.pmTable.get(procId).setNodeName(commandList[2]); 
+                    System.out.println("Migrate complete. Please check \"ps\" to verify if it was successful.");
                 }
                 catch (UnknownHostException e) {
                     System.out.println("Can't migrate process. Can't resolve IP address.");
