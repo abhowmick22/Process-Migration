@@ -1,3 +1,8 @@
+/**
+ * Generates an output stream through which the user can write to a file. It also appends to a file
+ * if the user asks for that functionality. 
+ */
+
 package distsys.promigr.io;
 
 import java.io.File;

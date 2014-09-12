@@ -1,3 +1,7 @@
+/**
+ * Thread spawned by the process manager in order to keep track of the nodes that are alive. 
+ */
+
 package distsys.promigr.manager;
 
 import java.io.IOException;

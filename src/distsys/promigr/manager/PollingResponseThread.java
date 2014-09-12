@@ -1,3 +1,8 @@
+/**
+ * Thread spawned by the local manager on each node to respond to the polling requests sent 
+ * by the polling request thread, and ascertain that the local manager on the node is still alive.
+ */
+
 package distsys.promigr.manager;
 
 import java.io.IOException;

@@ -1,3 +1,8 @@
+/**
+ *  It is an interface that every user class should implement in order to have the ability to 
+ *  migrate from one node to another without losing state. 
+ */
+
 package distsys.promigr.process;
 
 import java.io.Serializable;

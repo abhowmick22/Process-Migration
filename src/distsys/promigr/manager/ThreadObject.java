@@ -1,3 +1,10 @@
+/**
+ * It keeps track of the MigratableProcess (explained in next package) object and thread associated
+ * with each process. This is useful when the local manager wants to migrate one of its processes 
+ * to another node. It can help check if the thread running that process (object) is alive. 
+ * Also, it can help suspend the thread for migration.
+ */
+
 package distsys.promigr.manager;
 
 import distsys.promigr.process.MigratableProcess;

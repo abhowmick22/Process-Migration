@@ -1,3 +1,8 @@
+/**
+ * MergeFiles reads three different files at once, and merges the files line-by-line into an 
+ * output file. 
+ */
+
 package distsys.promigr.test;
 
 import java.io.PrintStream;

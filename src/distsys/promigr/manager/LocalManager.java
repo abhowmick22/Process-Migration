@@ -1,3 +1,9 @@
+/**
+ * Acts as the slave. It receives process creation and migration requests from the master and 
+ * performs the corresponding action. Additionally, it generates a report of the processes that are 
+ * currently running on it when the master asks for that information.
+ */
+
 package distsys.promigr.manager;
 
 import java.io.IOException;

@@ -1,3 +1,8 @@
+/**
+ * WebPageCopier read from a page on the world wide web, and copies the contents of the page to an 
+ * output file. 
+ */
+
 package distsys.promigr.test;
 
 import java.io.BufferedReader;

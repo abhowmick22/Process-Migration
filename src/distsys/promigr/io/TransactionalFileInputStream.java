@@ -1,3 +1,9 @@
+/**
+ * Generates an input stream through which the user can read a file. It also maintains the file 
+ * offset so that when the user migrates the process from node A to node B, then node B starts 
+ * reading the file from where A stopped reading it.
+ */
+
 package distsys.promigr.io;
 
 import java.io.File;

@@ -1,3 +1,8 @@
+/**
+ * Handles the actual processing of user queries that are sent by the process manager to the local 
+ * manager. This way, the local manager can cater to multiple queries without blocking.
+ */
+
 package distsys.promigr.manager;
 
 import java.io.IOException;

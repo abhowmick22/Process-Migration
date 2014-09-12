@@ -1,3 +1,7 @@
+/**
+ * Assists the process manager in keeping track of which processes are alive on the different nodes. 
+ */
+
 package distsys.promigr.manager;
 
 import java.io.IOException;

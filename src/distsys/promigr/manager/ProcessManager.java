@@ -1,3 +1,10 @@
+/**
+ * Acts as the master. It interacts with the user in order to take ‘create’, ‘migrate’ or ‘ps’ 
+ * commands. For a create command, it creates the process and sends it to the node mentioned by 
+ * the user for execution. In order to migrate a process, it instructs the corresponding node to 
+ * migrate to the destination. Finally the ‘ps’ command lists all the processes in the system. 
+ */
+
 package distsys.promigr.manager;
 
 import java.io.BufferedReader;

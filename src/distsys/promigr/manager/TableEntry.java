@@ -1,3 +1,9 @@
+/**
+ * It serves as a bookkeeping table to keep track of the status of each process (whether active or 
+ * not), the node that each process is running on and the process name and arguments associated 
+ * with a particular process ID.
+ */
+
 package distsys.promigr.manager;
 
 public class TableEntry {

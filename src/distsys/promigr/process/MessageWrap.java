@@ -1,3 +1,10 @@
+/**
+ * MessageWrap provides the ability to wrap the object corresponding to the user process, along 
+ * with additional metadata for effective communication between the master and slave. The master 
+ * can use it to send appropriate commands to be performed on the user process (object) that is 
+ * wrapped within a MessageWrap object, which is then sent over the network.  
+ */
+
 package distsys.promigr.process;
 
 import java.io.Serializable;

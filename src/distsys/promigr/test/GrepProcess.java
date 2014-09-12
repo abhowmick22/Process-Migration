@@ -1,3 +1,8 @@
+/**
+ * GrepProcess reads from a file, searches for a query and writes all the lines containing that 
+ * query to another file.
+ */
+
 package distsys.promigr.test;
 
 import java.io.PrintStream;
