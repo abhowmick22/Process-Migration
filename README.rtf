@@ -46,12 +46,12 @@ COMMAND SYNTAX:\
 \
 1. Create process:   
 \b create
-\b0  
-\b node-name process-name argument-list...
+\b0  <
+\b node-name> <process-name> <argument-list>
 \b0 \
-	creates a new process process-name on the node node-name\
+	creates a new process process-name on the node node-name by supplying the comma separated args\
 2. Migrate process:   
-\b migrate process-id destination-node\
+\b migrate <process-id> <destination-node>\
 
 \b0 	migrates process with ID process-id to node destination-node. The process ID will be generated and given to you when the process is created for the first time.\
 3. List processes:   
@@ -105,6 +105,6 @@ Say you are running local manager on
 	----Lists all the currently executing processes on all active nodes\
 \
 \
-TEXT FILE SOURCE:\
-\
-Text files for testing obtained form http://textfiles.com/news/}
+EXAMPLE INPUT FILES [SOURCE]:\
+Text files for testing obtained form http://textfiles.com/news/\
+Available in the ./run/ directory, suitable for the able example commands}
