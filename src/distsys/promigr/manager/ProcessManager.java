@@ -82,7 +82,7 @@ public class ProcessManager
                 String procId = "proc" + manager.procCount;    
                 MigratableProcess inst = manager.init(commandList);
                 if(inst == null) {
-                    System.out.println("Could not create process. May not be implementing MigratableProcess");
+                    System.out.println("Could not create process.");
                     continue;
                 }
                 

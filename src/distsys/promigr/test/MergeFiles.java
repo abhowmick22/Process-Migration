@@ -16,7 +16,6 @@ import distsys.promigr.io.TransactionalFileInputStream;
 import distsys.promigr.io.TransactionalFileOutputStream;
 import distsys.promigr.process.MigratableProcess;
 
-
 public class MergeFiles implements MigratableProcess
 {
 	private TransactionalFileInputStream[]  inFile; 	        
@@ -32,8 +31,7 @@ public class MergeFiles implements MigratableProcess
     {
         if (args.length != 4) {
             System.out.println("usage: MergeFiles <inputFile1> <inputFile2> <inputFile3> <outputFile>");
-            throw new Exception("Invalid Arguments");
-            //TODO: handle this exception in localmanagerthread.java
+            throw new Exception("Invalid Arguments");            
         }        
         inFile = new TransactionalFileInputStream[3];;
         for(int i=0; i<3; i++){
@@ -84,8 +82,4 @@ public class MergeFiles implements MigratableProcess
         suspending = true;
         while (suspending);
     }
- 
-
-  
-    
 }
