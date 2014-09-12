@@ -73,7 +73,7 @@ public class GrepProcessTest
             while(true) {
                 synchronized(LocalManager.class) {
                      clientSocket = serverSocket.accept();
-                     LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap, 50000);
+                     LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap);
                      Thread thread = new Thread(lmthread);
                      thread.start();
                 }

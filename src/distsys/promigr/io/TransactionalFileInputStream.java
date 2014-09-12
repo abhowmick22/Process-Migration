@@ -37,17 +37,17 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
         throws IOException
     {
         InputStream is = null;
+        int c = 0;
         try {
             is = new FileInputStream(this.file);
             is.skip(offset);
+            c = is.read();
+            this.offset++;
+            is.close();
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            //ignore
         }
-        int c = is.read();
-        this.offset++;  
-        is.close();
         return c;
     }
     

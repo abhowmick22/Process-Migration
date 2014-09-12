@@ -18,7 +18,6 @@ public class MessageWrap implements Serializable
     private MigratableProcess process;    
     private String procId;
     private Map<String, Boolean> procStatus;
-    //private boolean ack;        //TODO remove this
     
     /**
      * Returns the command to be executed.
@@ -68,10 +67,6 @@ public class MessageWrap implements Serializable
         return this.sourceAddr;
     }
     
-//    public boolean getAck() {
-//        return this.ack;
-//    }TODO
-    
     /**
      * Sets the command to be sent.
      * @param command
@@ -119,10 +114,4 @@ public class MessageWrap implements Serializable
     public void setSourceAddr(String sourceAddr) {
         this.sourceAddr = sourceAddr;
     }
-    
-//    public void setAck(boolean ack) {
-//        this.ack = ack;
-//    }TODO
-
-
 }

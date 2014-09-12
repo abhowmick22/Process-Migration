@@ -15,19 +15,15 @@ public class PollingRequestThread implements Runnable
 	private Socket clientSocket = null;
 	private ConcurrentMap<String, Boolean> machineAliveMap;
 	private ConcurrentMap<String, TableEntry> pmTable;
-	private int serverPort;
 	
 	/**
-	 * Constructor that initializes the local machine alive map, server port number and process manager table.
+	 * Constructor that initializes the local machine alive map and process manager table.
 	 * @param machineAliveMap The map of process ID and active machines.
 	 * @param pmTable The Map of process ID and metadata like node name, process name etc.
-	 * @param serverPort Server's port number.
 	 */
 	public PollingRequestThread(ConcurrentMap<String, Boolean> machineAliveMap, 
-								ConcurrentMap<String, TableEntry> pmTable, 
-								int serverPort) {
+								ConcurrentMap<String, TableEntry> pmTable) {
 		this.machineAliveMap = machineAliveMap;
-		this.serverPort = serverPort;
 		this.pmTable = pmTable;
 	}
 
@@ -45,7 +41,7 @@ public class PollingRequestThread implements Runnable
 				for(String localMachine : machineAliveMap.keySet()) {
 					currMachine = localMachine;
 					if(machineAliveMap.get(localMachine)){
-						clientSocket = new Socket(localMachine, serverPort);						
+						clientSocket = new Socket(localMachine, 50002);						
 						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 						outStream.writeObject(poll);
 						outStream.flush();

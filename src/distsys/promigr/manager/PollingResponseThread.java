@@ -6,7 +6,6 @@
 package distsys.promigr.manager;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -27,14 +26,11 @@ public class PollingResponseThread implements Runnable{
      * The run method executes for this class.
      */
 	@Override
-	public void run() {
-		ObjectInputStream in = null;		
+	public void run() {		
 		while(true){
 			try {
-				clientSocket = pollingSocket.accept();
-				in = new ObjectInputStream(clientSocket.getInputStream());				
-				//dummy object, do nothing      TODO
-				in.close();				
+			    // process manager should be able to connect
+				clientSocket = pollingSocket.accept();								
 			} catch (IOException e) {
 				//ignore
 			} 

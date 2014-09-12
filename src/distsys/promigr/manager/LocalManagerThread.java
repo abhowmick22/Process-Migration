@@ -25,18 +25,16 @@ public class LocalManagerThread implements Runnable
 {
 	private ConcurrentMap<String, ThreadObject> threadMap;
     private Socket clientSocket;
-    private int serverPort;
     
     /**
-     * Constructor which takes in the socket connection to master, map of 
-     * thread running on system and port number on which to communicate with TODO
+     * Constructor which initializes the socket connection to master and map of 
+     * thread running on system.
      */
     protected LocalManagerThread(Socket clientSocket, 
-    			ConcurrentMap<String, ThreadObject> threadMap, int serverPort)
+    			ConcurrentMap<String, ThreadObject> threadMap)
     {
         this.clientSocket = clientSocket;
         this.threadMap = threadMap;
-        this.serverPort = serverPort;
     }
 
     /**
@@ -86,7 +84,7 @@ public class LocalManagerThread implements Runnable
     				    return;		// do not do anything if the thread is dead
     				}
     				
-    				Socket clientSocket = new Socket(dest, this.serverPort);	
+    				Socket clientSocket = new Socket(dest, 50000);	
     				process.suspend();
     				
     				// Wrap the serialized process in a message
@@ -174,7 +172,7 @@ public class LocalManagerThread implements Runnable
             	// Send updated thread map information through a message 
             	// back to master, that is listening on port (serverPort+1)
 				try {
-					Socket clientSocket = new Socket(dest, this.serverPort + 1);
+					Socket clientSocket = new Socket(dest, 50001);
 					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 					MessageWrap psMsg = new MessageWrap();
 					psMsg.setCommand(5);

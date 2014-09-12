@@ -37,15 +37,13 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
         OutputStream outStream = null;
         try {
             outStream = new FileOutputStream(this.file, this.append);
+            outStream.write(b);
+            outStream.flush();
+            outStream.close();
+            this.append = true;     //because you need to append every time write() is called after the first write.
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        outStream.write(b);
-        outStream.flush();
-        outStream.close();
-        this.append = true;     //because you need to append every time write() is called after the first write.
+            //ignore
+        }        
     }
-
 }

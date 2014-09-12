@@ -14,13 +14,10 @@ import java.util.concurrent.ConcurrentMap;
 
 public class LocalManager
 {
-	public static ConcurrentMap<String, ThreadObject> threadMap;
-	private final static int serverPort = 50000;
+	public static ConcurrentMap<String, ThreadObject> threadMap;	
 	
     public static void main(String[] args) {
-        threadMap = new ConcurrentHashMap<String, ThreadObject>();
-        	
-        //TODO: remove "serverPort" and write 50000?
+        threadMap = new ConcurrentHashMap<String, ThreadObject>();        	
         ServerSocket pollingSocket = null;
         ServerSocket serverSocket = null;
         
@@ -29,7 +26,7 @@ public class LocalManager
          * thread.
          */
 		try {
-			pollingSocket = new ServerSocket(serverPort + 2);
+			pollingSocket = new ServerSocket(50002);
 	        PollingResponseThread prThread = new PollingResponseThread(pollingSocket);
 	        Thread polling = new Thread(prThread);
 	        polling.start();
@@ -40,7 +37,7 @@ public class LocalManager
 
 		// Server socket to listen for instruction messages from the master.
 		try {
-            serverSocket = new ServerSocket(serverPort);
+            serverSocket = new ServerSocket(50000);
         }
         catch (IOException e) {
             // can't do much on the local manager's side
@@ -60,8 +57,7 @@ public class LocalManager
             //Start a new thread to process to process each instruction 
             //from the master
             if(clientSocket != null) {
-                LocalManagerThread lmthread = new LocalManagerThread(clientSocket,
-                												threadMap, serverPort);
+                LocalManagerThread lmthread = new LocalManagerThread(clientSocket, threadMap);
                 Thread thread = new Thread(lmthread);
                 thread.start();
             }

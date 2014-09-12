@@ -38,7 +38,7 @@ public class ProcessManager
         manager.pmTable = new ConcurrentHashMap<String, TableEntry>();
         manager.machineAliveMap = new ConcurrentHashMap<String, Boolean>();
         
-    	PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, manager.pmTable, 50002);
+    	PollingRequestThread prThread = new PollingRequestThread(manager.machineAliveMap, manager.pmTable);
     	Thread polling = new Thread(prThread);
       	polling.start();
     	
@@ -98,26 +98,7 @@ public class ProcessManager
                     outStream.writeObject(echoMsg);
                     outStream.flush();
                     outStream.close();
-                    clientSocket.close();
-                    
-                    //wait till ack is received for this
-//                    ServerSocket serverSocket = new ServerSocket(50001);
-//                    clientSocket.setSoTimeout(3000); //TODO: test timeout                      
-//                    clientSocket = serverSocket.accept();
-//                    
-//                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
-//                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
-//                    if(messageWrap.getCommand() != 4) {
-//                        //TODO: something went wrong. this shouldn't happen. fix it
-//                        continue;
-//                    } else if(!messageWrap.getAck()) {
-//                        //ack failed
-//                        System.out.println("Failed to create process. Destination may be down.");
-//                        continue;
-//                    }
-//                    
-//                    //got acknowledgement of process creation; need to update tables
-//                    System.out.println("Process successfully created.");
+                    clientSocket.close();                    
                     
                     //update active machines table, and the process manager table to keep
                     //track of this newly created process
@@ -188,23 +169,6 @@ public class ProcessManager
                     outStream.close();
                     clientSocket.close();
                     
-                    //wait till ack is received for this
-//                    ServerSocket serverSocket = new ServerSocket(50001); 
-//                    clientSocket.setSoTimeout(3000); //TODO: test timeout  
-//                    clientSocket = serverSocket.accept();
-//                    ObjectInputStream objectStream = new ObjectInputStream(clientSocket.getInputStream());
-//                    MessageWrap messageWrap = (MessageWrap) objectStream.readObject();
-//                    if(messageWrap.getCommand() != 4) {
-//                        //TODO: something went wrong. this shouldn't happen. fix it
-//                        continue;
-//                    } else if(!messageWrap.getAck()) {
-//                        //ack failed
-//                        System.out.println("Failed to migrate process. Source or destination may be down.");
-//                        continue;
-//                    }
-//                    
-//                    //got acknowledgement of migration; now update tables
-//                    System.out.println("Process successfully migrated.");
                     //update the active process and machine lists
                     manager.machineAliveMap.put(commandList[2], true);
                     manager.pmTable.get(procId).setNodeName(commandList[2]); 
